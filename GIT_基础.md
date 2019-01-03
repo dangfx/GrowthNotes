@@ -8,7 +8,7 @@
 <img src="images/git/local.png" width="400" />
 
 #### 2.2.集中化的版本控制系统
-集中化版本控制系统（Centralized Version Control Systems，简称 CVCS），单一的集中管理的服务器，保存所有文件的修订版本，而协同工作的人们都通过客户端连到这台服务器，取出最新的文件或者提交更新。管理员也可以轻松掌控每个开发者的权限，并且管理一个 CVCS 要远比在各个客户端上维护本地数据库来得轻松容易。最显而易见的缺点是中央服务器的单点故障。
+集中化版本控制系统（Centralized Version Control Systems，简称 CVCS），单一的集中管理的服务器，保存所有文件的修订版本，而协同工作的人们都通过客户端连到这台服务器，取出最新的文件或者提交更新。管理员可以轻松掌控每个开发者的权限，并且管理一个 CVCS 要远比在各个客户端上维护本地数据库来得轻松容易。缺点是中央服务器的单点故障。
 <img src="images/git/centralized.png" width="400" />
 
 #### 2.3.分布式版本控制系统
@@ -56,10 +56,10 @@ git status	// 注:git会忽略空目录
 ```
 ##### 4.添加文件到暂存区
 ```
-git add test.txt			// 提交单个文件
-git add css					// 提交单个目录文件
-git add .|*|-A				// 提交所有文件
-git checkout test.txt		// 撤销已经add的文件
+git add test.txt	// 提交单个文件
+git add css	// 提交单个目录文件
+git add .|*|-A	// 提交所有文件
+git checkout test.txt	// 撤销已经add的文件
 ```
 ##### 5.提交文件
 ```
@@ -93,14 +93,14 @@ git branch testing
 ```
 
 #### 4.3 切换分支
-切换到新创建的 testing 分支，只是移动HEAD指针到testing分支
+切换到新创建的 testing 分支，起始就是移动HEAD头指针到testing分支。
 <img src="images/git/head-to-testing.png"  width="400" />
 ```
 git checkout testing
 ```
 
 #### 4.4 修改testing分支
-修改当前分支文件内容，提交当前（testing）分支
+修改当前分支文件内容，提交当前（testing）分支，同时移动HEAD头指针。
 <img src="images/git/advance-testing.png"  width="400" />
 ```
 git add testing.txt
@@ -115,7 +115,7 @@ git checkout master
 ```
 
 #### 4.6  修改master分支
-修改当前分支文件内容，提交当前（master）分支
+修改当前分支文件内容，提交当前（master）分支，同时移动HEAD头指针。
 <img src="images/git/advance-master.png"  width="500" />
 ```
 git add master.txt
@@ -130,7 +130,6 @@ git merge testing
 ```
 
 #### 4.8 删除分支
-删除testing分支
 <img src="images/git/delete-branch.png"  width="500" />
 
 ```
