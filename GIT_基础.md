@@ -8,7 +8,7 @@
 <img src="images/git/local.png" width="400" />
 
 #### 2.2.集中化的版本控制系统
-集中化的版本控制系统（Centralized Version Control Systems，简称 CVCS），单一的集中管理的服务器，保存所有文件的修订版本，而协同工作的人们都通过客户端连到这台服务器，取出最新的文件或者提交更新。管理员也可以轻松掌控每个开发者的权限，并且管理一个 CVCS 要远比在各个客户端上维护本地数据库来得轻松容易。最显而易见的缺点是中央服务器的单点故障。
+集中化版本控制系统（Centralized Version Control Systems，简称 CVCS），单一的集中管理的服务器，保存所有文件的修订版本，而协同工作的人们都通过客户端连到这台服务器，取出最新的文件或者提交更新。管理员也可以轻松掌控每个开发者的权限，并且管理一个 CVCS 要远比在各个客户端上维护本地数据库来得轻松容易。最显而易见的缺点是中央服务器的单点故障。
 <img src="images/git/centralized.png" width="400" />
 
 #### 2.3.分布式版本控制系统
@@ -26,7 +26,7 @@
 概念上来区分，其它大部分系统以文件变更列表的方式存储信息。 这类系统（CVS、Subversion、Perforce、Bazaar 等等）将它们保存的信息看作是一组基本文件和每个文件随时间逐步累积的差异。
 <img src="images/git/deltas.png" width="400" />
 
-Git 像是把数据看作是对小型文件系统的一组快照。 每次你提交更新，或在 Git 中保存项目状态时，它主要对当时的全部文件制作一个快照并保存这个快照的索引。 为了高效，如果文件没有修改，Git 不再重新存储该文件，而是只保留一个链接指向之前存储的文件。 Git 对待数据更像是一个 快照流。
+Git 像是把数据看作是对小型文件系统的一组快照。 每次你提交更新，或在 Git 中保存项目状态时，它主要对当时的全部文件制作一个快照并保存这个快照的索引。 为了高效，如果文件没有修改，Git 不再重新存储该文件，而是只保留一个链接指向之前存储的文件。 Git 对待数据更像是一个 快照流。这是 Git 与几乎所有其它版本控制系统的重要区别。
 <img src="images/git/snapshots.png" width="400" />
 
 Git 有三种状态，你的文件可能处于其中之一：已提交（committed）、已修改（modified）和已暂存（staged）。
@@ -74,14 +74,13 @@ git relog		// 查看之前操作
 ```
 git reset --hard 243w
 ```
-git 常见操作与状态转换描述
+git 常见操作与状态转换描述，工作区<==>暂存区<==>本地仓库，三种状态切换。
 <img src="images/git/baseoper.png"  width="500" />
 
 ### 4.  GIT 分支
 #### 4.1 分支第一次提交
 在Git的使用过程中一次提交称为历史记录（版本），并且会生成一个唯一的字符串
 <img src="images/git/branch.png"  width="400" />
-
 ```
 git commit -m 'message'
 ```
@@ -94,7 +93,7 @@ git branch testing
 ```
 
 #### 4.3 切换分支
-切换到新创建的 testing 分支，只是移动HEAD指针到testing分支上。
+切换到新创建的 testing 分支，只是移动HEAD指针到testing分支
 <img src="images/git/head-to-testing.png"  width="400" />
 ```
 git checkout testing
@@ -103,7 +102,6 @@ git checkout testing
 #### 4.4 修改testing分支
 修改当前分支文件内容，提交当前（testing）分支
 <img src="images/git/advance-testing.png"  width="400" />
-
 ```
 git add testing.txt
 git commit -m 'message'
@@ -118,7 +116,7 @@ git checkout master
 
 #### 4.6  修改master分支
 修改当前分支文件内容，提交当前（master）分支
-<img src="images/git/advance-master.png"  width="400" />
+<img src="images/git/advance-master.png"  width="500" />
 ```
 git add master.txt
 git commit -m 'message'
@@ -133,8 +131,8 @@ git merge testing
 
 #### 4.8 删除分支
 删除testing分支
-
 <img src="images/git/delete-branch.png"  width="500" />
+
 ```
 git branch -d testing
 ```
