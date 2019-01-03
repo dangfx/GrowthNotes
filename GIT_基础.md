@@ -57,8 +57,8 @@ git status	// 注:git会忽略空目录
 ##### 4.添加文件到暂存区
 ```
 git add test.txt	// 提交单个文件
-git add css	// 提交单个目录文件
-git add .|*|-A	// 提交所有文件
+git add css		// 提交单个目录文件
+git add .|*|-A		// 提交所有文件
 git checkout test.txt	// 撤销已经add的文件
 ```
 ##### 5.提交文件
@@ -131,7 +131,6 @@ git merge testing
 
 #### 4.8 删除分支
 <img src="images/git/delete-branch.png"  width="500" />
-
 ```
 git branch -d testing
 ```
@@ -174,7 +173,7 @@ ssh-keygen -t rsa -C "dangfeixiong@123.com"
 C:\Users\Administrator\.ssh
 
 // GitHub设置ssh
-点击右上角账号头像的“▼”→Settings→SSH and GPG keys →New SSH key
+点击右上角账号头像的"▼"→Settings→SSH and GPG keys →New SSH key
 复制id_rsa.pub的公钥内容。添加到Key 中，Titile可以随便填写。最后 Add SSH Key。
 
 // 测试ssh
