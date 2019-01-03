@@ -130,7 +130,7 @@ git merge testing
 ```
 
 #### 4.8 删除分支
-<img src="images/git/delete-branch.png"  width="500" />
+<img src="images/git/delete-branch.png"  width="600" />
 ```
 git branch -d testing
 ```
