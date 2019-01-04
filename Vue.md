@@ -201,9 +201,9 @@ filters: {
    + destroyed：销毁之后，实例已经不工作了
 
 ### Promise
-> 解决了回调地狱（指的是回调函数中，嵌套回调函数的代码形式）的问题；
+> 1. 解决了回调地狱（指的是回调函数中，嵌套回调函数的代码形式）的问题；
 >
-> ES7 中的 async 和 await 可以简化 Promise 调用，提高 Promise 代码的 阅读性 和 理解性；
+> 2. ES7 中的 async 和 await 可以简化 Promise 调用，提高 Promise 代码的 阅读性 和 理解性；
 
 ```javascript
 const p = new Promise(function(successCb, errorCb){
@@ -251,11 +251,11 @@ async function test(){
 
 ### axios使用
 
->地址：https://www.npmjs.com/package/axios
+>1. npm地址：https://www.npmjs.com/package/axios
 >
->只支持 `get` 和 `post` 请求，无法发起 `JSONP` 请求；
+>2. 只支持 `get` 和 `post` 请求，无法发起 `JSONP` 请求；
 >
->如果涉及到 `JSONP` 请求，可以让后端启用跨域资源共享即可；
+>3. 如果涉及到 `JSONP` 请求，可以让后端启用跨域资源共享即可；
 
 ```javascript
 // GET
@@ -325,11 +325,9 @@ export var a = 10
 
 #### 3. 使用webpack开发Vue
 > 安装 webpack
-> 1.新建一个项目并初始化 `npm init -y`
-> 2.装包 `npm i webpack webpack-cli -D`
-> 3.在 package.json 文件中新增一个dev的节点 
-
-
+> 1. 新建一个项目并初始化 `npm init -y`
+> 2. 装包 `npm i webpack webpack-cli -D`
+> 3. 在 package.json 文件中新增一个dev的节点 
 ```javascript
 "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -338,7 +336,6 @@ export var a = 10
 ```
 
 > 4.新建一个 webpack.config.js 配置文件
-
 ```javascript
 const path = require('path') // 导入 复制index.html页面的插件,得到一个构造函数
 module.exports = {
