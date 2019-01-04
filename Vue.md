@@ -329,7 +329,7 @@ export var a = 10
   }
 ```
 
-> 4.新建一个 webpack.config.js 配置文件
+> 4. 新建一个 webpack.config.js 配置文件
 ```javascript
 const path = require('path') // 导入 复制index.html页面的插件,得到一个构造函数
 module.exports = {
