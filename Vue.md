@@ -27,9 +27,7 @@
 
 #### 4. Vue基本指令
 
-> 1.插值表达式 `{{}}`：
-> 插值表达式中 使用简单的表达式，不能写语句；
-> 插值表达式只能用在元素的内容区域；不能用在元素的属性节点中；
+> 1. 插值表达式 `{{}}`；插值表达式中 使用简单的表达式，不能写语句；插值表达式只能用在元素的内容区域；不能用在元素的属性节点中；
 
 ```html
 <p>{{msg}}</p>
@@ -42,16 +40,13 @@
 <p v-text="msg">data</p>	<!-- data被覆盖 -->
 ```
 
->3.Vue指令 `v-html`
->msg中如果有html标签时可以被浏览器解析，有js脚本注入风险
+>3.Vue指令 `v-html`；msg中如果有html标签时可以被浏览器解析，有js脚本注入风险
 
 ```html
 <p v-html="msg"></p>	<!-- msg:<span>data</span> -->
 ```
 
->4.Vue指令 `v-bind`
->是为html属性节点动态绑定数据
->`v-bind:` 可以简写为 `:`
+>4.Vue指令 `v-bind`；是为html属性节点动态绑定数据；v-bind:` 可以简写为 `:`
 
 ```html
 <button v-bind:title="msg">按钮</button>
@@ -61,18 +56,13 @@
 <p :class="['thin', flag ? 'red' : '']">data</p>
 ```
 
->5.Vue指令 `v-model`
->`v-model` 只能与表单元素配合使用
->`v-bind` 实现单项数据同步 `data ---> 页面`
->`v-model` 实现上香数据同步 `data <---> 页面`
+>5.Vue指令 `v-model`；`v-model` 只能与表单元素配合使用；`v-bind` 实现单项数据同步 `data ---> 页面` ；`v-model` 实现上香数据同步 `data <---> 页面`
 
 ```html
 <input type="text" v-model="msg" />
 ```
 
->6.Vue指令 `v-on:`
->为html元素绑定时间函数
->`v-on:` 简写为 `@`
+>6.Vue指令 `v-on:`；为html元素绑定时间函数；`v-on:` 简写为 `@`
 
 ```html
 <input type="button" value="按钮" v-on:click="事件处理函数"/>
@@ -80,9 +70,7 @@
 <input type="button" value="按钮" @click="show(123)"/>
 ```
 
->7.Vue指令 `v-show`  `v-if`
->切换页面元素的显示与隐藏
->`v-if` 有更高的切换消耗，`v-show`  是通过 display:none 来切换状态
+>7.Vue指令 `v-show`  `v-if`；切换页面元素的显示与隐藏；`v-if` 有更高的切换消耗，`v-show`  是通过 display:none 来切换状态
 
 ```html
 {{if true}}
@@ -92,9 +80,7 @@
 <div v-show="true">data2</div>
 ```
 
->8.Vue指令 `v-for`
->迭代数组，迭代对象元素
->给 Vue 一个提示，以便能跟踪每个节点的身份，从而重用和重新排序现有元素，为每项提供一个唯一 key 。
+>8.Vue指令 `v-for`；迭代数组，迭代对象元素；给 Vue 一个提示，以便能跟踪每个节点的身份，从而重用和重新排序现有元素，为每项提供一个唯一 key 。
 
 ```html
 <!-- 数组 -->
