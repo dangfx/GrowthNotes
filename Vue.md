@@ -202,9 +202,7 @@ filters: {
 
 ### Promise
 > 1. 解决了回调地狱（指的是回调函数中，嵌套回调函数的代码形式）的问题；
->
 > 2. ES7 中的 async 和 await 可以简化 Promise 调用，提高 Promise 代码的 阅读性 和 理解性；
-
 ```javascript
 const p = new Promise(function(successCb, errorCb){
     // function中定义具体异步操作
@@ -252,11 +250,8 @@ async function test(){
 ### axios使用
 
 >1. npm地址：https://www.npmjs.com/package/axios
->
 >2. 只支持 `get` 和 `post` 请求，无法发起 `JSONP` 请求；
->
 >3. 如果涉及到 `JSONP` 请求，可以让后端启用跨域资源共享即可；
-
 ```javascript
 // GET
 axios.get('/user', {params: {ID: 12345}})
@@ -323,8 +318,7 @@ export var a = 10
 > 4. 适合单页面应用程序（single page application）开发；
 > 5. webpack只能打包.js文件，打包别的文件需要安装打包插件；
 
-#### 3. 使用webpack开发Vue
-> 安装 webpack
+#### 3. 安装 webpack
 > 1. 新建一个项目并初始化 `npm init -y`
 > 2. 装包 `npm i webpack webpack-cli -D`
 > 3. 在 package.json 文件中新增一个dev的节点 
@@ -347,19 +341,17 @@ module.exports = {
   }
 }
 ```
+
 #### 4. webpack实时打包
 > 1. 安装 `npm i webpack-dev-server -D`
 > 2. 打开`package.json`文件，把 `scripts` 节点下的 `dev` 脚本
-
 ```javascript
 "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "webpack-dev-server"
   }
 ```
-
 > 3. 修改 `index.html` 文件中的 `script` 的 `src`, 让 src 指向 内存中根目录下的 `/main.js`
-
 ```html
 <script src="/main.js"></script>
 ```
@@ -367,7 +359,6 @@ module.exports = {
 #### 5.使用插件配置启动页面
 > 1. 装包`npm i html-webpack-plugin -D`
 > 2. 在 `webpack.config.js`中，导入 插件
-
 ```javascript
 const HtmlPlugin = require('html-webpack-plugin')
 const htmlPlugin = new HtmlPlugin({
