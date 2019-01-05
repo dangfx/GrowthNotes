@@ -68,7 +68,7 @@ git commit -m 'message'		//message 提交的备注信息
 ##### 6.查看提交历史
 ```
 git log			// 查看所有变更
-git relog		// 查看之前操作
+git reflog		// 查看之前操作
 ```
 ##### 7.恢复某次提交
 ```
