@@ -321,7 +321,7 @@ export var a = 10
 const path = require('path') // 导入 复制index.html页面的插件,得到一个构造函数
 module.exports = {
     mode: 'development', // 两个可选值 development 和 production
-    entry: path.join(__dirname, './src/index1.js'), // 指定要打包哪个文件
+    entry: path.join(__dirname, './src/index.js'), // 指定要打包哪个文件
     output: {// 指定输出文件相关的配置
     path: path.join(__dirname, './dist'), // 把打包好的文件，输出到哪个目录中
     filename: 'build.js' // 指定输出文件的名称
@@ -329,17 +329,70 @@ module.exports = {
 }
 ```
 
+> 5. 在项目根目录下创建 src和dist目录，同时在src下创建`index.html` 与 `index.js`
+
+```html
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div id="app">
+        <span v-text="name"></span>
+        <span v-text="age"></span>
+        <span v-text="init"></span>
+        <button @click="show">按鈕</button>
+    </div>
+</body>
+</html>
+<script src="../dist/build.js"></script>
+```
+
+```javascript
+/* index.js */
+import Vue from 'vue/dist/vue.js'
+const vm = new Vue({
+    el: '#app',
+    data: {
+        name: 'dfx',
+        age: 26
+    },
+    methods: {
+        show(){
+            console.log('console show');
+        }
+    },
+    created(){
+        this.init = 'init';
+    }
+});
+```
+
+> 6. 运行 `npm run dev` 在dist中生成 `build.js`文件， 然后运行 `index.html` 文件。
+
 #### 4. webpack实时打包
+
 > 1. 安装 `npm i webpack-dev-server -D`
 > 2. 打开`package.json`文件，把 `scripts` 节点下的 `dev` 脚本
+> 3. `--open`  自动打开浏览器
+> 4. `--host`  指定浏览器host
+> 5. `--post`  指定访问端口
+> 6. `--hot`  支持热启动
 ```javascript
 "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "webpack-dev-server"
+    "dev": "webpack-dev-server --open --host 127.0.0.1 --port 3000 --hot"
   }
 ```
 > 3. 修改 `index.html` 文件中的 `script` 的 `src`, 让 src 指向 内存中根目录下的 `/main.js`
 ```html
+<!-- 
+	显示引入可以省略，如果不引入，默认生成以下一行代码
+	<script type="text/javascript" src="build.js"></script>
+-->
 <script src="/main.js"></script>
 ```
 
@@ -359,7 +412,7 @@ module.exports = {
 }
 ```
 
-> 3. 运行 `npm run webpack-dev-server --open --host 127.0.0.1 --post 3306 --hot `
+> 3. 运行 `npm run dev`
 
 
 #### 6. 打包处理非`JS`文件
@@ -389,27 +442,49 @@ module: {
   }
 ```
 
-##### 4.完整的配置文件示例
+##### 4.打包 vue 文件
+
+>1. 安装：`npm i vue-loader vue-template-compiler -D`
+>2. `vue-loader`  依赖 `css-loader`  与  `style-loader`
+>3. 修改 `webpack.config.js` 文件
+
+```javascript
+const VuePlugin = require('vue-loader/lib/plugin');
+const vuePlugin = new VuePlugin();
+// 添加 vue 插件
+plugins: [vuePlugin],
+// 添加解析 vue-loader     
+module: { 
+    rules: [{ test: /\.vue$/, use:['vue-loader']}]
+  }
+```
+
+##### 5.完整的配置文件示例
+
 ```javascript
 const path = require('path') // 导入 复制index.html页面的插件,得到一个构造函数
+
 const HtmlPlugin = require('html-webpack-plugin')
 const htmlPlugin = new HtmlPlugin({
   template: './src/index.html', // 指定要复制的模板
   filename: 'index.html' // 指定生成的文件的名称，这个被复制出来的文件，也是虚拟看不见的
 })
 
+const VuePlugin = require('vue-loader/lib/plugin');
+const vuePlugin = new VuePlugin();
+
 // 使用 CommonJS 规范，向外暴露一个配置对象
 // webpack 4.x 默认约定： 把 src -> index.js  打包 输出到 dist -> main.js
 module.exports = {
   mode: 'development', // 两个可选值 development 和 production
-  entry: path.join(__dirname, './src/index1.js'), // 指定要打包哪个文件
+  entry: path.join(__dirname, './src/index.js'), // 指定要打包哪个文件
   output: {
     // 指定输出文件相关的配置
     path: path.join(__dirname, './dist'), // 把打包好的文件，输出到哪个目录中
     filename: 'build.js' // 指定输出文件的名称
   },
   // webpack 要挂载的插件的数组
-  plugins: [htmlPlugin],
+  plugins: [htmlPlugin, vuePlugin],
   module: {// 所有非 JS 文件的第三方模块，都需要在这里进行配置，才能够被正常打包
     rules: [
       // 所有第三方文件模块的匹配规则 注意：loader的调用顺序，是从后往前调用
@@ -418,8 +493,199 @@ module.exports = {
       { test: /\.jpg|jpeg|png|gif|bmp|svg$/, use: 'url-loader' },
       // 打包处理字体文件的loader和打包处理图片的loader，都是url-loader
       { test: /\.eot|woff|woff2|ttf|svg$/, use: 'url-loader' },
+      { test: /\.vue$/, use:['vue-loader']}
       // { test: /\.js$/, use: 'babel-loader', exclude: /node_modules/ }
     ]
   }
 }
 ```
+
+### 使用webpack 开发vue
+
+#### 1. vue组件模块化及组件通信
+
+> 1. 文件后缀  `.vue`
+> 2. 下面是父组件
+
+```vue
+<!-- 结构 -->
+<template>
+    <div>
+        <h3 v-text="msg"></h3>
+        <hr />
+        <my-02 :test="test" @fun="show"></my-02>
+    </div>
+</template>
+
+<!-- 行为 -->
+<script>
+    import vue02 from './02.vue';
+    export default {
+        data(){
+            return {
+                msg: '这是01.vue page.',
+                test: {name: 'zhangsan', age: 24}
+            }
+        },
+        components: {
+            'my-02': vue02
+        },
+        methods: {
+            show(arg1, arg2){
+                console.log(`${arg1}, ${arg2}`);
+            }
+        },
+    }
+</script>
+
+<!-- 样式 -->
+<style scoped>
+    h3 {color: red;}
+</style>
+```
+
+> 3. 下面是子组件
+
+```vue
+<!-- 结构 -->
+<template>
+    <div>
+        <h3>{{msg}}</h3>
+        <h6>{{test01}}</h6>
+        <button @click="chuandi">传递数据</button>
+    </div>
+</template>
+
+<!-- 行为 -->
+<script>
+    export default {
+        data(){
+            return {
+                msg: '这是02.vue page.',
+                test01: this.test,
+                test02: '子组件向父组件传递的数据'
+            }
+        },
+        methods: {
+            chuandi(){
+                this.$emit('fun', this.test02, 'params')
+            }
+        },
+        props: ['test']
+    }
+</script>
+
+<!-- 样式 -->
+<style scoped>
+    h3 {color: lightgreen}
+</style>
+```
+
+> 父子组件传值关键点说明：
+>
+> 父组件向子组件通过属性传值，
+> ​	父组件：`:test="test"` 
+> ​	子组件： `props: ['test']`
+> 子组件向父组件通过事件传值：
+> ​	子组件：`this.$emit('fun', this.test02, 'params')`  
+> ​	父组件：`@fun="show"` 与 `show(arg1, arg2){console.log(`${arg1}, ${arg2}`);}`
+
+> 4. `index.js` 文件内容
+
+```javascript
+import Vue from 'vue/dist/vue.js'
+import vue01 from './vue/01.vue'
+Vue.component('my-01', vue01);
+const vm = new Vue({
+    el: '#app'
+});
+```
+
+> 5. `index.html` 文件内容
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div id="app">
+        <my-01></my-01>
+    </div>
+</body>
+</html>
+```
+
+> 6. 无关组件之间通信
+
+```vue
+<!-- 组件-01 -->
+<template>
+    <div>
+        <h3>{{msg}}</h3>
+        <button @click="send">按钮</button>
+    </div>
+</template>
+
+<script>
+    import {bus} from './bus.js';
+    export default {
+        data(){
+            return {msg: 'GG'};
+        },
+        methods: {
+            send(){
+                const param = {name: 'dfx', age: 25};
+                bus.$emit('ooo', param);
+            }
+        }
+    }
+</script>
+
+<style scoped>
+    h3 {color: red;}
+</style>
+```
+
+```vue
+<!-- 组件-02 -->
+<template>
+    <div>
+        <h3>{{msg}}</h3>
+    </div>
+</template>
+
+<script>
+    import {bus} from './bus.js';
+    export default {
+        data(){
+            return {msg: ''};
+        },
+        created() {
+            bus.$on('ooo', data => {
+                this.msg = data;
+            })
+        }
+    }
+</script>
+
+<style scoped>
+    h3{color: lightgreen;}
+</style>
+```
+
+```javascript
+import Vue from 'vue/dist/vue.js'
+let vm = new Vue();
+export {vm as bus}
+// 如果一个js模块文件就只有一个功能， 那么就可以使用export default导出
+```
+
+>说明：上面 `JS` 是组件之间通信的桥梁，通过将数据绑定到相同 `Vue`  对象上实现；
+>
+>组件-01向组件-02传值；
+>
+>关键点：`bus.$emit('ooo', param);`  与  `bus.$on('ooo', data => {this.msg = data;})`
+
