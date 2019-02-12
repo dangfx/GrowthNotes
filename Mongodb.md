@@ -67,6 +67,8 @@ db.createUser(
 
 #### 2.1 原理如图
 
+<img src="images/mongodb/replica_set.png" width="600" />
+
 #### 2.2 修改配置文件
 
 ```powershell
@@ -175,3 +177,4 @@ rs.status()
 
 CAP原则又称CAP定理，指的是在一个分布式系统中，Consistency（一致性）、 Availability（可用性）、Partition tolerance（分区容错性），三者不可兼得。
 
+<img src="images/mongodb/cap.jpg" width="500" />
