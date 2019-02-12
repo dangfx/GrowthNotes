@@ -188,6 +188,7 @@ filters: {
    + destroyed：销毁之后，实例已经不工作了
 
 ### Promise
+
 > 1. 解决了回调地狱（指的是回调函数中，嵌套回调函数的代码形式）的问题；
 > 2. ES7 中的 async 和 await 可以简化 Promise 调用，提高 Promise 代码的 阅读性 和 理解性；
 ```javascript
