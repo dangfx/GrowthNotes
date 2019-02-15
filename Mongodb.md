@@ -212,7 +212,7 @@ db.users.find({"wendang.yw":80});
    name: "O'Reilly Media",
    founded: 1980,
    location: "CA",
-   `books: [123456789, 234567890, ...]`
+   books: [123456789, 234567890, ...]
 }
 
 {
@@ -245,7 +245,7 @@ db.users.find({"wendang.yw":80});
 }
 
 {
-  `_id: 123456789,`
+  _id: 123456789,
    title: "MongoDB: The Definitive Guide",
    author: [ "Kristina Chodorow", "Mike Dirolf" ],
    published_date: ISODate("2010-09-24"),
@@ -256,7 +256,7 @@ db.users.find({"wendang.yw":80});
 }
 
 {
-  `_id: 234567890,`
+  _id: 234567890,
    title: "50 Tips and Tricks for MongoDB Developer",
    author: "Kristina Chodorow",
    published_date: ISODate("2011-05-06"),
@@ -291,18 +291,18 @@ db.person.insert({"name":"dangfx","phone":"13811111111","address_id":"1001"});
 db.person.insert({"name":"yanlh","phone":"13822222222","address_id":"1002"});
 db.person.insert({"name":"dangfy","phone":"13833333333","address_id":"1001"});
 db.person.insert({"name":"yanp","phone":"13844444444","address_id":"1002"});
-db.address.insert({"address_id":"1001",street":"jiangtai", "city":"beijing", "country":"china"});
+db.address.insert({"address_id":"1001","street":"jiangtai", "city":"beijing", "country":"china"});
 db.address.insert({"address_id":"1002","street":"xihuaxiang","city":"guansu.jiuqun","country":"china"});
 
 # 测试示例
 db.person.aggregate([
-{$match:{"phone":/^138/}},
-{$group:{_id:"$address_id",num:{$sum:1}}},
-{$match:{"num":{$gte:2}}},
-{$skip:1},
-{$limit:1},
-{$sort:{_id:1}},
-{$project:{num:1,_id:0}}
+{"$match":{"phone":/^138/}},
+{"$group":{"_id":"$address_id",num:{$sum:1}}},
+{"$match":{"num":{$gte:2}}},
+{"$skip":1},
+{"$limit":1},
+{"$sort":{_id:1}},
+{"$project":{num:1,_id:0}}
 ])
 
 db.person.aggregate([
@@ -312,9 +312,9 @@ db.person.aggregate([
 	foreignField:"address_id",
 	as:"address"
 }},
-{$match:{"name":/^dang/}},
-{$project:{"name":1,"address":1}},
-{$group:{_id:"$address.address_id", num:{$sum:1}}}
+{"$match":{"name":/^dang/}},
+{"$project":{"name":1,"address":1}},
+{"$group":{"_id":"$address.address_id", num:{$sum:1}}}
 ],{explain:true})
 ```
 
