@@ -166,15 +166,167 @@ db.users.update({"name":"u2"},{$set:{wendang:{"yw":80,"xw":90}}});
 db.users.find({"wendang.yw":80});
 ```
 
-### 4.mongodb集群搭建之Replica-Set方式
+### 4.mongodb数据模型设计
+
+>NoSQL不等于NoShcema，Document DB 没有固定Schema不代表不需要Schema Desgin。
+>
+>对于MongoDB中的许多用例，将相关数据存储在单个文档中的非规范化数据模型将是最佳的。
+>
+>Mongodb常见的3种基本设计模式:
+>
+>1.one-to-few："包含"，"许多"，"子文档总是在父文档的上下文中出现或被查看"，使用嵌入式文档。
+>
+>2.one-to-many："最大BSON文档大小为16M"，通过"手动引用"(主键关联)[ObjectID/业务主键]
+>
+>3.one-to-Squillions："通过主键关联任然超过16M"，将关联字段维护在one一方
+>
+>4.出现频率高的字段，可以采用类似RDBMS中的反三范式，冗余高频字段来处理
+
+1.one-to-few
+
+```javascript
+> db.person.find({}).pretty();
+{
+	"_id" : ObjectId("5c6624d5561bc1e61110a923"),
+	"name" : "dangfx",
+	"phone" : "13811111111",
+	"address" : [
+		{
+			"street" : "jiangtai",
+			"city" : "beijing",
+			"country" : "china"
+		},
+		{
+			"street" : "xihuaxiang",
+			"city" : "guansu.jiuqun",
+			"country" : "china"
+		}
+	]
+}
+```
+
+2.one-to-many
+
+```javascript
+{
+   name: "O'Reilly Media",
+   founded: 1980,
+   location: "CA",
+   `books: [123456789, 234567890, ...]`
+}
+
+{
+    _id: 123456789,
+    title: "MongoDB: The Definitive Guide",
+    author: [ "Kristina Chodorow", "Mike Dirolf" ],
+    published_date: ISODate("2010-09-24"),
+    pages: 216,
+    language: "English"
+}
+
+{
+   _id: 234567890,
+   title: "50 Tips and Tricks for MongoDB Developer",
+   author: "Kristina Chodorow",
+   published_date: ISODate("2011-05-06"),
+   pages: 68,
+   language: "English"
+}
+```
+
+3.one-to-Squillions
+
+```javascript
+{
+   _id: "oreilly",
+   name: "O'Reilly Media",
+   founded: 1980,
+   location: "CA"
+}
+
+{
+  `_id: 123456789,`
+   title: "MongoDB: The Definitive Guide",
+   author: [ "Kristina Chodorow", "Mike Dirolf" ],
+   published_date: ISODate("2010-09-24"),
+   pages: 216,
+   language: "English",
+   publisher_id: "oreilly"
+
+}
+
+{
+  `_id: 234567890,`
+   title: "50 Tips and Tricks for MongoDB Developer",
+   author: "Kristina Chodorow",
+   published_date: ISODate("2011-05-06"),
+   pages: 68,
+   language: "English",
+   publisher_id: "oreilly"
+
+}
+```
+
+### 5. mongodb中aggregation使用
+
+>aggregate：(聚合=>管道操作)通过流水线方式处理数据返回结果
+>
+>$project：定义输出字段
+>
+>$match：封装查询条件
+>
+>$group：对查询结果进行分组
+>
+>$skip：跳过前n个文档
+>
+>$limit：输出文档个数
+>
+>$sort：文档结果排序
+>
+>$lookup：多文档连接查询
+
+```javascript
+# 测试脚本
+db.person.insert({"name":"dangfx","phone":"13811111111","address_id":"1001"});
+db.person.insert({"name":"yanlh","phone":"13822222222","address_id":"1002"});
+db.person.insert({"name":"dangfy","phone":"13833333333","address_id":"1001"});
+db.person.insert({"name":"yanp","phone":"13844444444","address_id":"1002"});
+db.address.insert({"address_id":"1001",street":"jiangtai", "city":"beijing", "country":"china"});
+db.address.insert({"address_id":"1002","street":"xihuaxiang","city":"guansu.jiuqun","country":"china"});
+
+# 测试示例
+db.person.aggregate([
+{$match:{"phone":/^138/}},
+{$group:{_id:"$address_id",num:{$sum:1}}},
+{$match:{"num":{$gte:2}}},
+{$skip:1},
+{$limit:1},
+{$sort:{_id:1}},
+{$project:{num:1,_id:0}}
+])
+
+db.person.aggregate([
+{$lookup:{
+	from:"address",
+	localField:"address_id",
+	foreignField:"address_id",
+	as:"address"
+}},
+{$match:{"name":/^dang/}},
+{$project:{"name":1,"address":1}},
+{$group:{_id:"$address.address_id", num:{$sum:1}}}
+],{explain:true})
+```
+
+### 6.mongodb集群搭建之Replica-Set方式
 
 >副本集的方式需要一个主节点，一个备节点，如果主节点发生故障，那么会启用备节点，当主节点修复之后，主节点再次恢复为主节点，备节点不再是主节点的角色。副本集的方式还需要一个角色，那就是仲裁节点，它不存储数据，他的作用就是当主节点出现故障，选举出备节点作为主节点，继续保证集群可用。客户端连接时只连接主节点或者备节点，不用连接仲裁节点。
 
-#### 3.1 原理如图
+#### 6.1 原理如图
 
 <img src="images/mongodb/replica_set.png" width="600" />
 
-#### 3.2 修改配置文件
+#### 6.2 修改配置文件
 
 ```powershell
 cd /usr/local/mongodb-3.4.19
