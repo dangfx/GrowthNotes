@@ -61,16 +61,26 @@ git add css		// 提交单个目录文件
 git add .|*|-A		// 提交所有文件
 git checkout test.txt	// 撤销已经add的文件
 ```
-##### 5.提交文件
+##### 5.提交文件到本地
 ```
 git commit -m 'message'		//message 提交的备注信息
 ```
-##### 6.查看提交历史
+##### 6.本地与远程交互
+
+```
+-- 推送提交到远程
+git push
+-- 远程到本地
+git pull
+```
+
+##### 7.查看提交历史
+
 ```
 git log			// 查看所有变更
 git reflog		// 查看之前操作
 ```
-##### 7.恢复某次提交
+##### 8.恢复某次提交
 ```
 git reset --hard 243w
 ```
