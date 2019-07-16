@@ -163,8 +163,28 @@ show variables like '%binlog_format%';
 > 自增主键索引优点：1.插入数据有序，避免页分裂 2.一般占用4/8个字节，二级索引占用空间小
 >
 > 不使用自增索引：1.只有一个索引；2.该索引必须是唯一索引；就是KV场景。
+>
+> 覆盖索引：select ID from T where k between 3 and 5;
+>
+> k索引树可以直接提供查询结果，不需要回表，减少搜索树次数。
 
-<img src="D:/my_book/GrowthNotes/images/mysql/index.png" width="100%" />
+<img src="images/mysql/index.png" width="100%" />
+
+> 最左前缀：B+树可以利用索引的"最左前缀"。
+>
+> 建立联合索引事项：
+>
+> 1.优先通过调整顺序，减少维护索引。
+>
+> 2.既有联合查询，又有基于a，b各自查询，需要维护2个索引，建立单个索引使用空间较小的字段。
+
+<img src="images/mysql/left_index.jpg" width="100%" />
+
+> 索引下推：MySQL5.6引入索引下推优化，在索引遍历中，对索引中包含的字段优先判断。
+>
+> 优化点：减少回表次数。
+
+<img src="images/mysql/index_down.jpg" width="100%" />
 
 ### 3.配置master-slave架构
 
