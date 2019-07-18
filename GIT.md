@@ -64,6 +64,12 @@ git checkout test.txt	// 撤销已经add的文件
 ##### 5.提交文件到本地
 ```
 git commit -m 'message'		//message 提交的备注信息
+
+-- 还原已经提交的修改 
+-- 此次操作之前和之后的commit和history都会保留，并且把这次撤销作为一次最新的提交 
+git revert HEAD 			//撤销前一次 commit 
+git revert HEAD^ 			//撤销前前一次 commit 
+git revert commit-id 		//(撤销指定的版本，撤销也会作为一次提交进行保存） 
 ```
 ##### 6.本地与远程交互
 
@@ -80,9 +86,13 @@ git pull
 git log			// 查看所有变更
 git reflog		// 查看之前操作
 ```
-##### 8.恢复某次提交
+##### 8.回退某次提交
 ```
-git reset --hard 243w
+git reset --hard HEAD^       //回退到上个版本
+git reset --hard HEAD~3      //回退到前3次提交之前，以此类推，回退到n次提交之前
+-- 回滚回退版本
+git reflog
+git reset --hard c6f1988	//代码和git记录都恢复
 ```
 git 常见操作与状态转换描述，工作区<==>暂存区<==>本地仓库，三种状态切换。
 <img src="images/git/baseoper.png"  width="500" />
