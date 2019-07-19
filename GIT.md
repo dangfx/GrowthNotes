@@ -64,6 +64,7 @@ git checkout test.txt	// 撤销已经add的文件
 ##### 5.提交文件到本地
 ```
 git commit -m 'message'		//message 提交的备注信息
+git commit --amend			//修改注释，通过vim编辑
 ```
 ##### 6.本地与远程交互
 
