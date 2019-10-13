@@ -187,6 +187,185 @@ filters: {
    + beforeDestroy：销毁之前，实例还正常可用
    + destroyed：销毁之后，实例已经不工作了
 
+####  8.Vue阶段示例
+
+##### 1.代码示例
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>menu</title>
+    <!-- 依赖lib包，使用CDN:https://www.jsdelivr.com -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.2.0/dist/vue-resource.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div id="app">
+
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">商品CRUD操作</h3>
+            </div>
+            <div class="panel-body form-inline">
+                <label>bid: <input type="text" name="bid" class="form-control" v-model="bid"></label>
+                <label>bookname:<input type="text" name="bookname" class="form-control" v-model="bookname"></label>
+                <label>book_cover:<input type="text" name="book_cover" class="form-control"
+                        v-model="book_cover"></label>
+                <input type="button" value="add" class="btn btn-primary" @click="add">
+                <label>search:
+                    <input type="text" class="form-control" placeholder="search" v-model="keywords" v-focus v-color>
+                </label>
+            </div>
+
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <td>bid</td>
+                        <td>bookname</td>
+                        <td>book_cover</td>
+                        <td>operate</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="item in search(keywords)" :key="item.bid">
+                        <td v-text="item.bid"></td>
+                        <td v-text="item.bookname"></td>
+                        <td><img :src="item.book_cover" width="20" height="20" /></td>
+                        <!-- <td>{{ item.time | date_format('yyyy-mm-dd hh:MM:ss') }}</td> -->
+                        <td>
+                            <input type="button" value="del" class="btn btn-primary btn-sm" @click="del(item.bid)">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <hr />
+        <!-- 全局组件 -->
+        <items></items>
+        <!-- 局部组件 -->
+        <my-items></my-items>
+    </div>
+
+    <template id="content">
+        <div>{{cont}}</div>
+    </template>
+</body>
+
+</html>
+
+<script>
+
+    // 定义组件
+    // 组件：页面UI复用
+    // 模块：嗲吗逻辑复用
+    Vue.component('items', {
+        template: '#content',
+        data: function () {
+            return {
+                cont: "this is a template."
+            }
+        }
+    })
+
+    // 在线测试免费api接口
+    // https://www.jianshu.com/p/e6f072839282
+    Vue.http.options.root = 'https://www.apiopen.top';
+
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            bid: '',
+            bookname: '',
+            book_cover: '',
+            keywords: '',
+            items: []
+        },
+        methods: {// vue method
+            add() {
+                var obj = { 'bid': this.bid, 'bookname': this.bookname, 'book_cover': this.book_cover }
+                this.items.push(obj)
+                this.bid = ''
+                this.bookname = ''
+                this.book_cover = ''
+            },
+            del(bid) {
+                this.items.splice(this.items.findIndex(item => item.bid === bid), 1)
+            },
+            search(keywords) {
+                var new_array = this.items.filter(item => {
+                    if (item.bookname.includes(keywords)) {
+                        return item;
+                    }
+                });
+                return new_array;
+            }
+        },
+        filters: {// vue 过滤器，对展示数据做二次处理
+            date_format(time, format = 'yyyy-mm-dd') {
+
+                var date = new Date(time);
+                var year = String(date.getFullYear()).padStart(4, '0');
+                var month = String(date.getMonth()).padStart(2, '0');
+                var day = String(date.getDay()).padStart(2, '0');
+                var timeStr = `${year}-${month}-${day}`;
+
+                if ('yyyy-mm-dd hh:MM:ss' == format) {
+                    var hour = String(date.getHours()).padStart(2, '0');
+                    var minute = String(date.getMinutes()).padStart(2, '0');
+                    var second = String(date.getSeconds()).padStart(2, '0');
+                    timeStr += ` ${hour}:${minute}:${second}`;
+                }
+                return timeStr;
+            }
+        },
+        directives: {// vue 自定义指令，使用时 v-xxx
+            focus: {
+                inserted: function (el) {
+                    el.focus()
+                }
+            },
+            color: {
+                bind: function (el) {
+                    el.style.color = '#40E0D0';
+                }
+            }
+        },
+        components: {// vue 定义局部组件
+            "my-items": {
+                template: "<h1>this is a my-items.</h1>"
+            }
+        },
+        created() {// vue 内置生命周期函数(自动调用)
+            // init items get，ajax:vue-resource
+            this.$http.get('novelApi').then(response => {
+                // get body data
+                //console.log(response.body);
+                var result = response.body;
+                if (result.code === 200) {
+                    this.items = result.data;
+                } else {
+                    alert("获取列表信息失败!");
+                }
+            }, response => {
+                // error callback
+                console.error('read data.json file error');
+            });
+
+            // TODO test post
+        }
+    });
+</script>
+```
+
+
+
+
+
 ### Promise
 
 > 1. 解决了回调地狱（指的是回调函数中，嵌套回调函数的代码形式）的问题；
