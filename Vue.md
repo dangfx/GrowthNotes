@@ -260,7 +260,7 @@ filters: {
 
     // 定义组件
     // 组件：页面UI复用
-    // 模块：嗲吗逻辑复用
+    // 模块：代码逻辑复用
     Vue.component('items', {
         template: '#content',
         data: function () {
@@ -410,7 +410,7 @@ filters: {
 
 <body>
     <div id="app">
-
+		<!-- 命名视图实现经典布局 -->
         <router-view></router-view>
         <div class="container">
             <router-view name="main"></router-view>
@@ -419,6 +419,7 @@ filters: {
 
     </div>
 
+    <!-- 组件嵌套及参数传递,注:一定要使用div标签包裹 -->
     <template id="con">
         <div class="content">
             <h3>content</h3>
@@ -434,26 +435,22 @@ filters: {
 <script>
     // 自定义模板
     var header = {
-        template: '<h3 class="header">header</h3>'
+        template: `<h3 class="header">header</h3>`
     }
     var main = {
-        template: '<h3 class="main">main</h3>'
+        template: `<h3 class="main">main</h3>`
     }
     var content = {
         template: '#con'
     }
     var login = {
-        template: `
-        <h3>登录页面 {{ $route.query }}</h3>
-        `,
+        template: `<h3>登录页面 {{ $route.query }}</h3>`,
         created() {
             console.log(this.$route);
         }
     }
     var register = {
-        template: `
-        <h3>注册页面 {{ $route.params }}</h3>
-        `,
+        template: `<h3>注册页面 {{ $route.params }}</h3>`,
         created() {
             console.log(this.$route);
         }
@@ -463,13 +460,13 @@ filters: {
     var router = new VueRouter({
         routes: [
             {
-                path: '/',	// 定义路由规则
-                components: {// 关联组件
+                path: '/',			// 定义路由规则
+                components: {		// 关联组件
                     'default': header,
                     'main': main,
                     'content': content
                 },
-                children: [// 定义子路由规则
+                children: [			// 定义子路由规则
                     { path: 'login', component: login },
                     { path: 'register/:id/:name', component: register }
                 ]
