@@ -189,8 +189,6 @@ filters: {
 
 ####  8.Vue阶段示例
 
-##### 1.代码示例
-
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -362,7 +360,131 @@ filters: {
 </script>
 ```
 
+#### 9. vue-router
 
+>官方文档地址：https://router.vuejs.org/zh/
+>
+>作用：单页面跳转，使用html中锚点实现
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>vue-router</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-router@3.0.3/dist/vue-router.js"></script>
+
+    <style>
+        html,
+        body,
+        h3 {
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background-color: lightgreen;
+            height: 50px;
+        }
+
+        .container {
+            display: flex;
+            height: 300px;
+        }
+
+        .main {
+            background-color: lightsalmon;
+            flex: 2;
+        }
+
+        .content {
+            background-color: lightblue;
+            flex: 8;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+
+        <router-view></router-view>
+        <div class="container">
+            <router-view name="main"></router-view>
+            <router-view name="content"></router-view>
+        </div>
+
+    </div>
+
+    <template id="con">
+        <div class="content">
+            <h3>content</h3>
+            <!-- 链接标签 -->
+            <router-link to="/login?id=12&name=dfx">登录</router-link>
+            <router-link to="/register/13/ylh">注册</router-link>
+            <!-- 内容显示标签 -->
+            <router-view></router-view>
+        </div>
+    </template>
+</body>
+
+<script>
+    // 自定义模板
+    var header = {
+        template: '<h3 class="header">header</h3>'
+    }
+    var main = {
+        template: '<h3 class="main">main</h3>'
+    }
+    var content = {
+        template: '#con'
+    }
+    var login = {
+        template: `
+        <h3>登录页面 {{ $route.query }}</h3>
+        `,
+        created() {
+            console.log(this.$route);
+        }
+    }
+    var register = {
+        template: `
+        <h3>注册页面 {{ $route.params }}</h3>
+        `,
+        created() {
+            console.log(this.$route);
+        }
+    }
+
+    // 创建 vue-router 实例
+    var router = new VueRouter({
+        routes: [
+            {
+                path: '/',	// 定义路由规则
+                components: {// 关联组件
+                    'default': header,
+                    'main': main,
+                    'content': content
+                },
+                children: [// 定义子路由规则
+                    { path: 'login', component: login },
+                    { path: 'register/:id/:name', component: register }
+                ]
+            }
+        ]
+    })
+
+    var vm = new Vue({
+        el: "#app",
+        // vue 与 vue-router 建立关系
+        router: router
+    })
+</script>
+</html>
+```
 
 
 
