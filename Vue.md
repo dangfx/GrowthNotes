@@ -410,13 +410,12 @@ filters: {
 
 <body>
     <div id="app">
-		<!-- 命名视图实现经典布局 -->
+        <!-- 命名视图实现经典布局 -->
         <router-view></router-view>
         <div class="container">
             <router-view name="main"></router-view>
             <router-view name="content"></router-view>
         </div>
-
     </div>
 
     <!-- 组件嵌套及参数传递,注:一定要使用div标签包裹 -->
@@ -460,13 +459,13 @@ filters: {
     var router = new VueRouter({
         routes: [
             {
-                path: '/',			// 定义路由规则
-                components: {		// 关联组件
+                path: '/',// 定义路由规则
+                components: {// 关联组件
                     'default': header,
                     'main': main,
                     'content': content
                 },
-                children: [			// 定义子路由规则
+                children: [// 定义子路由规则
                     { path: 'login', component: login },
                     { path: 'register/:id/:name', component: register }
                 ]
