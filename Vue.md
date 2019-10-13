@@ -214,6 +214,7 @@ filters: {
                 <label>book_cover:<input type="text" name="book_cover" class="form-control"
                         v-model="book_cover"></label>
                 <input type="button" value="add" class="btn btn-primary" @click="add">
+                <span>{{ book_data }}</span>
                 <label>search:
                     <input type="text" class="form-control" placeholder="search" v-model="keywords" v-focus v-color>
                 </label>
@@ -353,8 +354,16 @@ filters: {
                 // error callback
                 console.error('read data.json file error');
             });
-
-            // TODO test post
+        },
+        watch: { // 监听属性变化(bid值的变化)
+            'bid': function (newVal, oldVal) {
+                console.log(newVal + "---" + oldVal);
+            }
+        },
+        computed: {// 计算属性本质就是方法, 计算属性中任意相关属性变化, 都会执行该方法
+            'book_data': function () {
+                return this.bid + "--" + this.bookname + "--" + this.book_cover;
+            }
         }
     });
 </script>
