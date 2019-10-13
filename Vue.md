@@ -607,15 +607,49 @@ export var a = 10
 
 #### 2. webpack作用
 > 1. 如果项目使用 webpack 进行构建，我们可以书写高级的ES代码，且不用考虑兼容性；
-> 2. webpack 能够优化项目的性能，比如文件合并、压缩等；
+> 2. webpack 能够优化项目的性能，比如文件合并，压缩，混淆等；
 > 3. 基于webpack，程序员可以把 自己的开发重心，放到功能上；
 > 4. 适合单页面应用程序（single page application）开发；
 > 5. webpack只能打包.js文件，打包别的文件需要安装打包插件；
 
-#### 3. 安装 webpack
-> 1. 新建一个项目并初始化 `npm init -y`
-> 2. 装包 `npm i webpack webpack-cli -D`
-> 3. 在 package.json 文件中新增一个dev的节点 
+#### 3.项目目录结构
+
+```javascript
+// 前端项目目录结构
+webpack-study
+	---dist [打包后生成文件目录]
+	---node_modules	[node安装包自动生成路径]
+	---src
+		---css
+		---images
+		---js
+		---index.html [项目入口]
+		---main.js	[编写源码文件]
+	---package.json [初始化项目后自动生成]
+
+// 初始化项目 在webpack-study目录下执行命令
+npm init -y
+
+// 添加依赖
+// -S/-D,-S是--save的简写
+// -D是--save-dev的简写，-S与-D的区别就是-S会被打包到运行环境中去，-D只是在开发中使用，比如babel转码
+npm i jQuery@3.4.1 -S
+
+// 安装 webpack 全局
+npm i webpack -g
+
+// webpack 打包
+webpack .\src\main.js .\dist\bundle.js
+
+// 将 .\dist\bundle.js 文件引入html中即可
+```
+
+#### 4. 安装 webpack
+
+> 1. npm 是nodejs(JS)的包管理工具，安装nodejs后，就有npm命令了
+> 2. 新建一个项目并初始化 `npm init -y`
+> 3. 装包 `npm i webpack webpack-cli -D`
+> 4. 在 package.json 文件中新增一个dev的节点 
 ```javascript
 "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -680,7 +714,7 @@ const vm = new Vue({
 
 > 6. 运行 `npm run dev` 在dist中生成 `build.js`文件， 然后运行 `index.html` 文件。
 
-#### 4. webpack实时打包
+#### 5. webpack实时打包
 
 > 1. 安装 `npm i webpack-dev-server -D`
 > 2. 打开`package.json`文件，把 `scripts` 节点下的 `dev` 脚本
@@ -703,7 +737,7 @@ const vm = new Vue({
 <script src="/main.js"></script>
 ```
 
-#### 5.使用插件配置启动页面
+#### 6.使用插件配置启动页面
 > 1. 装包`npm i html-webpack-plugin -D`
 > 2. 在 `webpack.config.js`中，导入 插件
 ```javascript
@@ -722,7 +756,7 @@ module.exports = {
 > 3. 运行 `npm run dev`
 
 
-#### 6. 打包处理非`JS`文件
+#### 7. 打包处理非`JS`文件
 ##### 1. 打包 css 文件
 > 1. 安装：`npm i style-loader css-loader -D`
 > 2. `webpack.config.js` 配置文件，新增处理 css 样式表的loader规则：
