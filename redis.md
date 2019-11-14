@@ -352,3 +352,7 @@ OK
 
 ## 三.redis实战应用
 
+1.[数据类型操作](https://www.cnblogs.com/tangge/p/10698821.html)
+
+2.[数据类型实战](https://www.ctolib.com/topics-713.html)
+
