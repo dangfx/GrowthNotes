@@ -1,8 +1,8 @@
 ### 公共资源
 
-> 下载地址:https://www.elastic.co/cn/downloads/past-releases#elasticsearch
-> 文档地址:https://www.elastic.co/guide/en/elasticsearch/reference/7.2/index.html
-> 版本支持:https://www.elastic.co/cn/support/matrix
+> 1. 下载地址:https://www.elastic.co/cn/downloads/past-releases#elasticsearch
+> 2. 文档地址:https://www.elastic.co/guide/en/elasticsearch/reference/7.2/index.html
+> 3. 版本支持:https://www.elastic.co/cn/support/matrix
 
 ### 安装说明
 
