@@ -8,4 +8,5 @@
 * [MySQL](https://github.com/dangfx/GrowthNotes/blob/master/mysql.md)
 * [Redis](https://github.com/dangfx/GrowthNotes/blob/master/redis.md)
 * [Elasticsearch](https://github.com/dangfx/GrowthNotes/blob/master/elasticsearch.md)
+* [design_pattern](https://github.com/dangfx/GrowthNotes/blob/master/design_pattern.md)
 
