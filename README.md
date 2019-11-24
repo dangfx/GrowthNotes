@@ -9,4 +9,5 @@
 * [Redis](https://github.com/dangfx/GrowthNotes/blob/master/redis.md)
 * [Elasticsearch](https://github.com/dangfx/GrowthNotes/blob/master/elasticsearch.md)
 * [design_pattern](https://github.com/dangfx/GrowthNotes/blob/master/design_pattern.md)
+* [Java Lock](https://github.com/dangfx/GrowthNotes/blob/master/lock.md)
 
