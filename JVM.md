@@ -155,7 +155,59 @@ HelloWorld@3b0143d3
 
 ### 4.程序计数器
 
+>1. 记录当前线程执行地址（记录的是正在执行字节码指令的地址）。
+>2. 程序计数器，是唯一一个在java虚拟机规范中没有规定任何OutOfMemoryError的区域。
+>3. 执行native本地方法时，程序计数器的值为空（Undefined），C/C++执行时的内存分配是由自己语言决定的，而不是由JVM决定的。
+>4. 程序计数器占用内存很小，在进行JVM内存计算时，可以忽略不计。
 
+### 5.native method stack
 
-### 5.Native
+>1. 定义 `native method` ，只有方法定义没有方法实现，类似 `interface` ，现体是由非java语言实现的。
+>2. `JNI`  Java Native Interface，它提供了若干的API实现了Java和其他语言的通信，JNI允许Java代码使用以其他语言编写的代码和代码库。
+>3. 通过 `RPC` 实现异构平台（不同语言）交互问题。
 
+### 6.java stack
+
+>栈帧(Stack Frame)：每个方法在执行时都会创建一个栈帧
+>
+>线程栈：(JMM) 执行java方法，创建栈帧[局部变量表，操作数栈，动态链接，方法出口]
+>
+>局部变量表：方法参数，局部变量；存放了编译期可知的各种基本类型(boolean、byte、char、short、int、float、long、double)、对象引用(reference 类型)和 returnAddress 类型(指向了一条字节码指令的地址)。
+>
+>操作数栈：【LIFI】的执行引擎
+>
+>动态链接：【静态标识】代码执行指向静态标识指令码地址
+>
+>方法出口：调用方法对应的行标识
+>
+>`引用标识(reference) ==> heap(对象实例数据) ==> metnod area(对象数据类型)`
+
+<img src="images/jvm/stack.jpg" width="100%" />
+
+### 7.heap
+
+>java7：young（新生代），old（老年代），permanent（永久代）
+>
+>young：eden，s0，s1
+
+<img src="images/jvm/java_7_heap.png" width="100%" />
+
+> java8：young（新生代），old（老年代），metaSpace（元空间，物理内存）
+>
+> young：eden，s0，s1
+
+<img src="images/jvm/java_8_heap.png" width="100%" />
+
+### 8.method area
+
+> class结构信息（字节码文件），类信息，常量，静态变量。
+
+### 9.JDK8以前 & JDK8
+
+>JDK8以前
+
+<img src="images/jvm/JDK8_per.png" width="100%" />
+
+>JDK8
+
+<img src="images/jvm/JDK8.png" width="100%" />
