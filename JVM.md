@@ -186,13 +186,17 @@ HelloWorld@3b0143d3
 
 ### 7.heap
 
->java7：young（新生代），old（老年代），permanent（永久代）
+>java7：
+>
+>​	逻辑分类：young（新生代），old（老年代），permanent（永久代）
+>
+>​	物理分类：young（新生代），old（老年代）
 >
 >young：eden，s0，s1
 
-<img src="images/jvm/java_7_heap.png" width="100%" />
+<img src="images/jvm/jvm_heap.jpg" width="100%" />
 
-> java8：young（新生代），old（老年代），metaSpace（元空间，物理内存）
+> java8：逻辑分类：young（新生代），old（老年代），metaSpace（元空间，物理内存）
 >
 > young：eden，s0，s1
 
@@ -211,3 +215,70 @@ HelloWorld@3b0143d3
 >JDK8
 
 <img src="images/jvm/JDK8.png" width="100%" />
+
+### 10.GC垃圾回收算法
+
+>GC使用 "分代收集算法"，即年轻代使用复制算法，老年代使用标记清除与标记压缩算法，没有最好的算法，只有最适合场景的算法。
+>
+>1.GC引用计数法
+>
+>存在循环引用问题(无引用对象无法回收)
+>
+>下面代码中obj1和obj2指向的对象已经不可能再被访问，彼此互相引用对方导致引用计数都不为0，最终无法被GC回收，可达性分析可以解决这个问题。
+>
+>垃圾回收器回收那些不是 GC Roots 的对象并且不再被GC Roots引用的对象。
+>
+>1. 虚拟机栈(栈帧中的本地变量表)中引用的对象；
+>2. 方法区中的类静态属性引用的对象；
+>3. 方法区中的常量引用的对象；
+>4. 原生方法栈（Native Method Stack）中 JNI 中引用的对象。
+
+```java
+ public class GcDemo {
+    public static void main(String[] args) {
+        //分为6个步骤
+        GcObject obj1 = new GcObject(); //Step 1
+        GcObject obj2 = new GcObject(); //Step 2
+
+        obj1.instance = obj2; //Step 3
+        obj2.instance = obj1; //Step 4
+
+        obj1 = null; //Step 5
+        obj2 = null; //Step 6
+    }
+}
+class GcObject{
+    public Object instance = null;
+}
+```
+
+>2.GC复制算法：年轻代使用的算法
+>
+>无碎片，耗内存，GC之后有交换，谁空谁是TO
+
+<img src="images/jvm/young_copy.png" width="80%" />
+
+>3.标记清除算法（mark-sweep）
+>
+>标记 -- 清除，有碎片，省内存
+
+<img src="images/jvm/mark_sweep.jpg" width="80%" />
+
+>4.标记整理算法（mark-compact）
+>
+>标记 -- 清除 -- 整理，无碎片，省内存，耗时间
+
+<img src="images/jvm/mark_compact.jpg" width="80%" />
+
+### 11.java 内存模型
+
+>原子性，可见性，有序性，volatile不能保证原子性
+>
+>Volatile实现内存可见性是通过store和load指令完成的；也就是对volatile变量执行写操作时，会在写操作后加入一条store指令，即强迫线程将最新的值刷新到主内存中；而在读操作时，会加入一条load指令，即强迫从主内存中读入变量的值。
+>
+>1. Private **int Num=0;**  
+>2. Num++;//Num不是原子操作  
+>3. 对于Num++;操作，线程1和线程2都执行一次，最后输出Num的值可能是：1或者2
+>      【解释】输出结果1的解释：当线程1执行Num++;语句时，先是读入Num的值为0，倘若此时让出CPU执行权，线程获得执行，线程2会重新从主内存中，读入Num的值还是0，然后线程2执行+1操作，最后把Num=1刷新到主内存中； 线程2执行完后，线程1由开始执行，但之前已经读取的Num的值0，所以它还是在0的基础上执行+1操作，也就是还是等于1，并刷新到主内存中。所以最终的结果是1。
+
+ <img src="images/jvm/volatile_jmm.png" width="100%" />
