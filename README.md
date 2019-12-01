@@ -11,5 +11,5 @@
 * [design_pattern](https://github.com/dangfx/GrowthNotes/blob/master/design_pattern.md)
 * [Java Lock](https://github.com/dangfx/GrowthNotes/blob/master/lock.md)
 * [JVM](https://github.com/dangfx/GrowthNotes/blob/master/JVM.md)
-* [nginx](https://aceld.gitbooks.io/nginx-zh/content/) 注:外部链接
+* [nginx](https://github.com/dangfx/GrowthNotes/blob/master/nginx.md)
 
