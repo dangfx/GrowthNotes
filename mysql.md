@@ -8,7 +8,64 @@
 
 ### 2.安装MySQL5.7
 
-安装：https://www.cnblogs.com/hsbt2333/p/9915616.html
+安装方式一：https://www.cnblogs.com/hsbt2333/p/9915616.html
+
+安装方式二：
+
+> 下载地址：https://dev.mysql.com/downloads/file/?id=489764
+>
+> 参考文档：https://dev.mysql.com/doc/refman/5.7/en/
+>
+> 安装命令：
+
+```powershell
+# 检查 
+rpm -qa | grep mariadb
+rpm -qa | grep mysql
+# 卸载
+rpm -e --nodeps mariadb-libs-5.5.56-2.el7.x86_64
+warning: /etc/my.cnf saved as /etc/my.cnf.rpmsave
+rm -rf /etc/my.cnf
+rm -rf /etc/my.cnf.rpmsave
+# 下载
+wget https://dev.mysql.com/get/Downloads/MySQL-5.7/mysql-5.7.28-1.el7.x86_64.rpm-bundle.tar
+# 解压
+mkdir mysql-5.7.28
+tar -xvf mysql-5.7.28-1.el7.x86_64.rpm-bundle.tar -C mysql-5.7.28
+# 安装依赖
+yum install net-tools
+# 安装mysql，注意安装步骤
+rpm -ivh mysql-community-common-5.7.28-1.el7.x86_64.rpm
+rpm -ivh mysql-community-libs-5.7.28-1.el7.x86_64.rpm
+rpm -ivh mysql-community-client-5.7.28-1.el7.x86_64.rpm
+rpm -ivh mysql-community-server-5.7.28-1.el7.x86_64.rpm
+# 检查版本
+mysqladmin --version
+# 启动服务
+systemctl start mysqld
+# 检查服务状态
+systemctl status mysqld
+# 获取mysql自动生成密码
+grep 'temporary password' /var/log/mysqld.log
+2019-12-08T11:37:20.523247Z 1 [Note] A temporary password is generated for root@localhost: MpZ>A%<kv7lP
+# 登录
+mysql -uroot -pMpZ>A%<kv7lP
+# 设置密码策略/长度
+set global validate_password_policy=0;
+set global validate_password_length=6;
+select @@validate_password_length;
+# 查看数据库
+mysql> show databases;
+# 授予root用户远程访问权限
+grant all privileges on *.* to 'root' @'%' identified by '123456';
+flush privileges;
+
+# 安装目录说明
+vim /etc/my.cnf # 全局配置文件
+ls -alh /usr/bin/ | grep 'mysql' # mysql命令目录
+```
+
+
 
 从库安装复制主库
 
