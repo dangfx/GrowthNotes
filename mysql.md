@@ -65,7 +65,20 @@ vim /etc/my.cnf # 全局配置文件
 ls -alh /usr/bin/ | grep 'mysql' # mysql命令目录
 ```
 
+>mysql 存储引擎
+>
+> 查看引擎 SHOW ENGINES;
 
+| engine  | comment                                                    | other                                                    |
+| ------- | ---------------------------------------------------------- | -------------------------------------------------------- |
+| InnoDB  | Supports transactions, row-level locking, and foreign keys | 事物，行锁，外键，并发                                   |
+| MyISAM  | MyISAM storage engine                                      |                                                          |
+| CSV     | CSV storage engine                                         | 以表名开头并具有 .CSV 扩展名                             |
+| ARCHIVE | Archive storage engine                                     | supports INSERT, REPLACE, SELECT, but not DELETE, UPDATE |
+
+>sql join type
+
+<img src="images/mysql/sql-join.png" width="90%" />
 
 从库安装复制主库
 
