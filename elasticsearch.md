@@ -1,8 +1,9 @@
 ### 公共资源
 
-> 1. 下载地址:https://www.elastic.co/cn/downloads/past-releases#elasticsearch
-> 2. 文档地址:https://www.elastic.co/guide/en/elasticsearch/reference/7.2/index.html
-> 3. 版本支持:https://www.elastic.co/cn/support/matrix
+> 1. 下载地址：https://www.elastic.co/cn/downloads/past-releases#elasticsearch
+> 2. 文档地址：https://www.elastic.co/guide/en/elasticsearch/reference/7.2/index.html
+> 3. 版本支持：https://www.elastic.co/cn/support/matrix
+> 4. 参考资料（阮一鸣）：https://github.com/onebirdrocks/geektime-ELK
 
 ### 安装说明
 
@@ -83,6 +84,107 @@ cd /opt/software/kibana-7.2.1-linux-x86_64/
 ### test `kibana`
 
 > 浏览器访问：http://192.168.114.131:5601
+
+es 与 RDBMS对比
+
+| RDBMS  | elasticsearch | desc                                   |
+| ------ | ------------- | -------------------------------------- |
+| table  | index(type)   | es7以上只支持一个type                  |
+| row    | document      |                                        |
+| column | field         |                                        |
+| schema | mapping       |                                        |
+| SQL    | DSL           | Domain Specific Language：领域特定语言 |
+
+> ES 的 CRUD
+
+```json
+######## Create Document ########
+#create document. 自动生成 _id
+POST users/_doc
+{
+	"user" : "Mike",
+    "post_date" : "2019-04-15T14:12:12",
+    "message" : "trying out Kibana"
+}
+
+#create document. 指定Id。如果id已经存在，报错
+PUT users/_doc/1?op_type=create
+{
+    "user" : "Jack",
+    "post_date" : "2019-05-15T14:12:12",
+    "message" : "trying out Elasticsearch"
+}
+
+#create document. 指定 ID 如果已经存在，就报错
+PUT users/_create/1
+{
+     "user" : "Jack",
+    "post_date" : "2019-05-15T14:12:12",
+    "message" : "trying out Elasticsearch"
+}
+
+######## Get Document ########
+#Get the document by ID
+GET users/_doc/1
+
+####### Update Document ######
+#Update 指定 ID  (先删除，在写入)
+PUT users/_doc/1
+{
+	"user" : "Mike"
+}
+
+#在原文档上增加字段
+POST users/_update/1/
+{
+    "doc":{
+        "post_date" : "2019-05-15T14:12:12",
+        "message" : "trying out Elasticsearch"
+    }
+}
+
+####### Delete Document ######
+#Delete by Id
+DELETE users/_doc/1
+```
+
+>bulk的格式：
+>{action:{metadata}}\n
+>{requstbody}\n (请求体)
+>
+>action：(行为)，包含create（文档不存在时创建）、update（更新文档）、index（创建新文档或替换已用文档）、delete（删除一个文档）。
+>create和index的区别：如果数据存在，使用create操作失败，会提示文档已存在，使用index则可以成功执行。
+>metadata：(行为操作的具体索引信息)，需要指明数据的_index、_type、_id。
+
+```json
+# 示例说明1 bulk
+{ "index" : { "_index" : "test", "_id" : "1" } } 	//行为，索引信息
+{ "field1" : "value1" }								//请求体					
+{ "delete" : { "_index" : "test", "_id" : "2" } }	//删除的批量操作不需要请求体
+{ "create" : { "_index" : "test2", "_id" : "3" } } 	//如果记录存在，创建失败
+{ "field1" : "value3" }								//请求体
+{ "update" : {"_id" : "1", "_index" : "test"} }		//更新不能缺失_id，文档不存在更新将会失败
+{ "doc" : {"field2" : "value2"} }					//请求体
+
+# 示例说明2 Multi Get
+https://www.elastic.co/guide/en/elasticsearch/reference/7.1/docs-multi-get.html
+
+GET /_mget
+{
+    "docs" : [
+        {
+            "_index" : "test",
+            "_type" : "_doc",
+            "_id" : "1"
+        },
+        {
+            "_index" : "test",
+            "_type" : "_doc",
+            "_id" : "2"
+        }
+    ]
+}
+```
 
 中文分词效果测试
 
