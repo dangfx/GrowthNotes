@@ -102,7 +102,7 @@ es 与 RDBMS对比
 #create document. 自动生成 _id
 POST users/_doc
 {
-	"user" : "Mike",
+    "user" : "Mike",
     "post_date" : "2019-04-15T14:12:12",
     "message" : "trying out Kibana"
 }
@@ -118,7 +118,7 @@ PUT users/_doc/1?op_type=create
 #create document. 指定 ID 如果已经存在，就报错
 PUT users/_create/1
 {
-     "user" : "Jack",
+    "user" : "Jack",
     "post_date" : "2019-05-15T14:12:12",
     "message" : "trying out Elasticsearch"
 }
@@ -131,7 +131,7 @@ GET users/_doc/1
 #Update 指定 ID  (先删除，在写入)
 PUT users/_doc/1
 {
-	"user" : "Mike"
+    "user" : "Mike"
 }
 
 #在原文档上增加字段
