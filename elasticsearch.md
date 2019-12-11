@@ -53,6 +53,24 @@ cd elasticsearch-7.2.1/
 }
 ```
 
+### 安装 `kibana`
+
+```shell
+wget https://artifacts.elastic.co/downloads/kibana/kibana-7.2.1-linux-x86_64.tar.gz
+tar -xzf kibana-7.2.1-linux-x86_64.tar.gz
+# 备份配置文件,连接es
+cd kibana-7.2.1-linux-x86_64/config
+cp kibana.yml kibana.yml.bak
+vim kibana.yml
+# lasticsearch.hosts: ["http://192.168.114.131:9200"]
+cd /opt/software/kibana-7.2.1-linux-x86_64/
+./bin/kibana -c /opt/software/kibana-7.2.1-linux-x86_64/config/kibana.yml
+```
+
+### test `kibana`
+
+> 浏览器访问：http://192.168.114.131:5601
+
 ### 装中文分词插件
 
 >网址：https://github.com/medcl/elasticsearch-analysis-ik
@@ -144,25 +162,7 @@ GET _analyze
 }
 ```
 
-### 安装 `kibana`
-
-```shell
-wget https://artifacts.elastic.co/downloads/kibana/kibana-7.2.1-linux-x86_64.tar.gz
-tar -xzf kibana-7.2.1-linux-x86_64.tar.gz
-# 备份配置文件,连接es
-cd kibana-7.2.1-linux-x86_64/config
-cp kibana.yml kibana.yml.bak
-vim kibana.yml
-# lasticsearch.hosts: ["http://192.168.114.131:9200"]
-cd /opt/software/kibana-7.2.1-linux-x86_64/
-./bin/kibana -c /opt/software/kibana-7.2.1-linux-x86_64/config/kibana.yml
-```
-
-### test `kibana`
-
-> 浏览器访问：http://192.168.114.131:5601
-
-es 与 RDBMS对比
+> es 与 RDBMS对比
 
 | RDBMS  | elasticsearch | desc                                   |
 | ------ | ------------- | -------------------------------------- |
@@ -172,7 +172,28 @@ es 与 RDBMS对比
 | schema | mapping       |                                        |
 | SQL    | DSL           | Domain Specific Language：领域特定语言 |
 
-> ES 的 CRUD
+>正排索引：文档ID到文档内容与单词的关联
+>
+>倒排索引：单词到文档ID的关联
+
+| 文档ID | 文档内容                 |      | term          | count | document:postion |
+| ------ | ------------------------ | ---- | ------------- | ----- | ---------------- |
+| 1      | master elasticsearch     |      | elasticsearch | 3     | 1:1 2:0 3:0      |
+| 2      | elasticsearch server     |      | master        | 1     | 1:0              |
+| 3      | elasticsearch essentials |      | server        | 1     | 2:1              |
+|        |                          |      | essentials    | 1     | 3:1              |
+
+>term distionary（单词词典），记录所有文档单词，单词到倒排列表的关联关系，B+/hash拉链法实现
+>
+>posting list（倒排列表），记录了单词对应的文档组合，文档ID，词频，位置，偏移（单词高亮）
+
+| 文档ID | 文档内容                 |      | docId | TF   | postion | offset |
+| ------ | ------------------------ | ---- | ----- | ---- | ------- | ------ |
+| 1      | master elasticsearch     |      | 1     | 1    | 1       | <7,20> |
+| 2      | elasticsearch server     |      | 2     | 1    | 0       | <0,13> |
+| 3      | elasticsearch essentials |      | 3     | 1    | 0       | <0,13> |
+
+> ES CRUD 操作
 
 ```json
 ######## Create Document ########
@@ -224,6 +245,84 @@ POST users/_update/1/
 #Delete by Id
 DELETE users/_doc/1
 ```
+> SE URI search 查询
+
+```json
+# q 指定查询语句
+# df指定查询字段
+# sort 排序
+# from/size 分页
+# profile 查看乬是如何被执行的
+GET /kibana_sample_data_ecommerce/_search?q=ZO0299602996&df=sku&sort=customer_id:desc&from=0&size=5
+{
+	"profile":"true"
+}
+
+# 指定单字段查询
+GET /kibana_sample_data_ecommerce/_search?q=sku:ZO0299602996
+{
+	"profile":"true"
+}
+
+# PhraseQuery 等效 Eddie AND Underwood 与顺序一致
+GET /kibana_sample_data_ecommerce/_search?q=customer_full_name:"Eddie Underwood"
+{
+	"profile":"true"
+}
+
+# 验证与顺序有关
+GET /kibana_sample_data_ecommerce/_search?q=customer_full_name:"Underwood Eddie"
+{
+	"profile":"true"
+}
+
+# BooleanQuery 与顺序无关
+GET /kibana_sample_data_ecommerce/_search?q=customer_full_name:(Underwood AND Eddie)
+{
+	"profile":"true"
+}
+
+# 等效于 Eddie OR MALE
+GET /kibana_sample_data_ecommerce/_search?q=customer_full_name:Eddie MALE
+{
+	"profile":"true"
+}
+
+# customer_full_name:underwood -customer_full_name:eddie
+GET /kibana_sample_data_ecommerce/_search?q=customer_full_name:(Underwood NOT Eddie)
+{
+	"profile":"true"
+}
+
+# 区间查询
+GET /kibana_sample_data_ecommerce/_search?q=customer_id：<= 38
+{
+	"profile":"true"
+}
+
+GET /kibana_sample_data_ecommerce/_search?q=customer_id:[39 TO 39]
+{
+	"profile":"true"
+}
+
+#通配符查询
+GET /kibana_sample_data_ecommerce/_search?q=currency:EUR*
+{
+	"profile":"true"
+}
+
+# 模糊匹配&近似度匹配
+GET /kibana_sample_data_ecommerce/_search?q=category:Clothin~1
+{
+	"profile":"true"
+}
+
+# "Lord Rings" 单词中间可以间隔2单词
+GET /kibana_sample_data_ecommerce/_search?q=category:"Lord Rings"~2
+{
+	"profile":"true"
+}
+```
 
 >bulk的格式：
 >{action:{metadata}}\n
@@ -262,27 +361,6 @@ GET /_mget
     ]
 }
 ```
-
->正排索引：文档ID到文档内容与单词的关联
->
->倒排索引：单词到文档ID的关联
-
-| 文档ID | 文档内容                 |      | term          | count | document:postion |
-| ------ | ------------------------ | ---- | ------------- | ----- | ---------------- |
-| 1      | master elasticsearch     |      | elasticsearch | 3     | 1:1 2:0 3:0      |
-| 2      | elasticsearch server     |      | master        | 1     | 1:0              |
-| 3      | elasticsearch essentials |      | server        | 1     | 2:1              |
-|        |                          |      | essentials    | 1     | 3:1              |
-
->term distionary（单词词典），记录所有文档单词，单词到倒排列表的关联关系，B+/hash拉链法实现
->
->posting list（倒排列表），记录了单词对应的文档组合，文档ID，词频，位置，偏移（单词高亮）
-
-| 文档ID | 文档内容                 |      | docId | TF   | postion | offset |
-| ------ | ------------------------ | ---- | ----- | ---- | ------- | ------ |
-| 1      | master elasticsearch     |      | 1     | 1    | 1       | <7,20> |
-| 2      | elasticsearch server     |      | 2     | 1    | 0       | <0,13> |
-| 3      | elasticsearch essentials |      | 3     | 1    | 0       | <0,13> |
 
 ### `es` query
 
