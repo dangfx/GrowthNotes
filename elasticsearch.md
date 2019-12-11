@@ -65,7 +65,84 @@ unzip elasticsearch-analysis-ik-7.2.1.zip -d ik/
 rm -rf elasticsearch-analysis-ik-7.2.1.zip
 ```
 
->重启es
+>重启es，中文分词效果测试
+
+```json
+GET _analyze
+{
+  "analyzer":"ik_smart",
+  "text":"美国留给伊拉克的是个烂摊子吗"
+}
+
+GET _analyze
+{
+  "analyzer":"ik_max_word",
+  "text":"美国留给伊拉克的是个烂摊子吗"
+}
+```
+
+>es 分词器分类
+>
+>英文空格切分
+>
+>中文 `icu_analyzer`全球化分词支持，  `ik`，  `THU`
+>
+>ICU：https://github.com/elastic/elasticsearch-analysis-icu
+>
+>IK：https://github.com/medcl/elasticsearch-analysis-ik
+>
+>THULAC：https://github.com/microbun/elasticsearch-thulac-plugin
+
+```json
+# standard 按词(空格)切分，小写处理
+GET _analyze
+{
+  "analyzer": "standard",
+  "text": "2 running Quick brown-foxes leap over lazy dogs in the summer evening."
+}
+
+# simple 按照非字母切分（符号被过滤），小写处理
+GET _analyze
+{
+  "analyzer": "simple",
+  "text": "2 running Quick brown-foxes leap over lazy dogs in the summer evening."
+}
+
+# whitespace 按照空格切分，不转小写
+GET _analyze
+{
+  "analyzer": "whitespace",
+  "text": "2 running Quick brown-foxes leap over lazy dogs in the summer evening."
+}
+
+# stop 小写处理，停用词过滤（the，a，is）
+GET _analyze
+{
+  "analyzer": "stop",
+  "text": "2 running Quick brown-foxes leap over lazy dogs in the summer evening."
+}
+
+# Keyword 不分词，直接将输入当作输出
+GET _analyze
+{
+  "analyzer": "keyword",
+  "text": "2 running Quick brown-foxes leap over lazy dogs in the summer evening."
+}
+
+# Patter 正则表达式，默认 \W+ (非字符分隔)
+GET _analyze
+{
+  "analyzer": "pattern",
+  "text": "2 running Quick brown-foxes leap over lazy dogs in the summer evening."
+}
+
+# Language – 提供了30多种常见语言的分词器
+GET _analyze
+{
+  "analyzer": "english",
+  "text": "2 running Quick brown-foxes leap over lazy dogs in the summer evening."
+}
+```
 
 ### 安装 `kibana`
 
@@ -186,21 +263,26 @@ GET /_mget
 }
 ```
 
-中文分词效果测试
+>正排索引：文档ID到文档内容与单词的关联
+>
+>倒排索引：单词到文档ID的关联
 
-```json
-GET _analyze
-{
-  "analyzer":"ik_smart",
-  "text":"美国留给伊拉克的是个烂摊子吗"
-}
+| 文档ID | 文档内容                 |      | term          | count | document:postion |
+| ------ | ------------------------ | ---- | ------------- | ----- | ---------------- |
+| 1      | master elasticsearch     |      | elasticsearch | 3     | 1:1 2:0 3:0      |
+| 2      | elasticsearch server     |      | master        | 1     | 1:0              |
+| 3      | elasticsearch essentials |      | server        | 1     | 2:1              |
+|        |                          |      | essentials    | 1     | 3:1              |
 
-GET _analyze
-{
-  "analyzer":"ik_max_word",
-  "text":"美国留给伊拉克的是个烂摊子吗"
-}
-```
+>term distionary（单词词典），记录所有文档单词，单词到倒排列表的关联关系，B+/hash拉链法实现
+>
+>posting list（倒排列表），记录了单词对应的文档组合，文档ID，词频，位置，偏移（单词高亮）
+
+| 文档ID | 文档内容                 |      | docId | TF   | postion | offset |
+| ------ | ------------------------ | ---- | ----- | ---- | ------- | ------ |
+| 1      | master elasticsearch     |      | 1     | 1    | 1       | <7,20> |
+| 2      | elasticsearch server     |      | 2     | 1    | 0       | <0,13> |
+| 3      | elasticsearch essentials |      | 3     | 1    | 0       | <0,13> |
 
 ### `es` query
 
