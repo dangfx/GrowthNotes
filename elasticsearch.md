@@ -217,26 +217,30 @@ GET _analyze
 | 2      | elasticsearch server     |      | 2     | 1    | 0       | <0,13> |
 | 3      | elasticsearch essentials |      | 3     | 1    | 0       | <0,13> |
 
-> ES CRUD 操作说明
 
-| type   | DSL  | desc  |
-| ------ | ------ | ---- |
-| index  | PUT my_index/_doc/1 
-{"user":"mike", "comment":"test 111"} | 先删除，再创建 |
-| create | PUT my_index/_create/1 
-{"user":"mike", "comment":"test 111"} 
-POST my_index/_doc
-{"user":"mike", "comment":"test 111"} | 1. 如果id已经存在，报错
-2. 自动生成 _id |
-| read   | GET my_index/_doc/1   |          |
-| updat  | POST my_index/_update/1
-{"doc":{"user":"zs","comment":"test 222","message":"123"}} | 添加字段 |
-| delete | DELETE my_index/_doc/1|                                     |
-
-
-> ES CRUD 操作
+> ES CRUD 操作说明及操作
 
 ```json
+1. index ==> 先删除，再创建
+PUT my_index/_doc/1 
+{"user":"mike", "comment":"test 111"}
+
+2. create ==> 1. 如果id已经存在，报错  2. 自动生成 _id 
+PUT my_index/_create/1 
+{"user":"mike", "comment":"test 111"} 
+POST my_index/_doc
+{"user":"mike", "comment":"test 111"}
+
+3. read
+GET my_index/_doc/1
+
+4. updat ==> 添加字段
+POST my_index/_update/1
+{"doc":{"user":"zs","comment":"test 222","message":"123"}}
+
+5. delete
+DELETE my_index/_doc/1
+
 ######## Create Document ########
 #create document. 自动生成 _id
 POST users/_doc
