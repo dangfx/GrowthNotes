@@ -5,6 +5,20 @@
 > 3. 版本支持：https://www.elastic.co/cn/support/matrix
 > 4. 参考资料（阮一鸣）：https://github.com/onebirdrocks/geektime-ELK
 
+### 定义
+
+>elasticsearch： 提供海量数据存储，近实时数据搜索与聚合功能
+>
+>beats：轻量的数据收集器
+>
+>logstash：做数据转换
+>
+>kibana：数据可视化
+
+### 使用场景
+
+>搜索，日志管理，安全分析，指标分析，业务分析
+
 ### 安装说明
 
 >1. linux install V7.2.1
@@ -162,15 +176,25 @@ GET _analyze
 }
 ```
 
+> 基本概念：
+>
+> 分词：将文本转换为倒排索引中的 terms 的过程，文本 ==> terms 
+>
+> 分词过程：character_filter[字符过滤器] ==>  tokenizer[分词器]  ==> token filetr [token过滤器]
+>
+> char_filter：html标签
+>
+> token filetr：字母大小写转换，删除停用词
+>
 > es 与 RDBMS对比
 
-| RDBMS  | elasticsearch | desc                                   |
-| ------ | ------------- | -------------------------------------- |
-| table  | index(type)   | es7以上只支持一个type                  |
-| row    | document      |                                        |
-| column | field         |                                        |
-| schema | mapping       |                                        |
-| SQL    | DSL           | Domain Specific Language：领域特定语言 |
+| RDBMS  | elasticsearch | desc                                    |
+| ------ | ------------- | --------------------------------------- |
+| table  | index(type)   | es7以上只支持一个type，相似文档结构集合 |
+| row    | document      |                                         |
+| column | field         |                                         |
+| schema | mapping       |                                         |
+| SQL    | DSL           | Domain Specific Language：领域特定语言  |
 
 >正排索引：文档ID到文档内容与单词的关联
 >
@@ -192,6 +216,22 @@ GET _analyze
 | 1      | master elasticsearch     |      | 1     | 1    | 1       | <7,20> |
 | 2      | elasticsearch server     |      | 2     | 1    | 0       | <0,13> |
 | 3      | elasticsearch essentials |      | 3     | 1    | 0       | <0,13> |
+
+> ES CRUD 操作说明
+
+| type   | DSL                                                          | desc                                   |
+| ------ | ------------------------------------------------------------ | -------------------------------------- |
+| index  | PUT my_index/_doc/1
+{"user":"mike", "comment":"test 111"}     | 先删除，再创建                         |
+| create | PUT my_index/_create/1
+{"user":"mike", "comment":"test 111"}
+POST my_index/_doc
+{"user":"mike", "comment":"test 111"} | 1. 如果id已经存在，报错
+2. 自动生成 _id |
+| read   | GET my_index/_doc/1                                          |                                        |
+| update | POST my_index/_update/1
+{"doc":{"user":"zs","comment":"test 222","message":"123"}} | 添加字段                               |
+| delete | DELETE my_index/_doc/1                                       |                                        |
 
 > ES CRUD 操作
 
@@ -400,7 +440,7 @@ GET /_mget
 | 字段可索引    | Y      | N       | N        |
 | mapping被更新 | Y      | N       | N        |
 
-测试脚本
+> 测试脚本
 
 ```json
 #默认Mapping支持dynamic，写入的文档中加入新的字段
@@ -456,6 +496,9 @@ PUT dynamic_mapping_test/_doc/12
 DELETE dynamic_mapping_test
 ```
 
+>elasticsearch 聚合
+>
+>https://github.com/onebirdrocks/geektime-ELK/blob/master/part-1/3.14-Elasticsearch%E8%81%9A%E5%90%88%E5%88%86%E6%9E%90%E7%AE%80%E4%BB%8B/README.md
 
 
 ### `es` query
