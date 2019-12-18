@@ -219,19 +219,20 @@ GET _analyze
 
 > ES CRUD 操作说明
 
-| type   | DSL                                                          | desc                                   |
-| ------ | ------------------------------------------------------------ | -------------------------------------- |
-| index  | PUT my_index/_doc/1
-{"user":"mike", "comment":"test 111"}     | 先删除，再创建                         |
-| create | PUT my_index/_create/1
-{"user":"mike", "comment":"test 111"}
+| type   | DSL  | desc  |
+| ------ | ------ | ---- |
+| index  | PUT my_index/_doc/1 
+{"user":"mike", "comment":"test 111"} | 先删除，再创建 |
+| create | PUT my_index/_create/1 
+{"user":"mike", "comment":"test 111"} 
 POST my_index/_doc
 {"user":"mike", "comment":"test 111"} | 1. 如果id已经存在，报错
 2. 自动生成 _id |
-| read   | GET my_index/_doc/1                                          |                                        |
-| update | POST my_index/_update/1
-{"doc":{"user":"zs","comment":"test 222","message":"123"}} | 添加字段                               |
-| delete | DELETE my_index/_doc/1                                       |                                        |
+| read   | GET my_index/_doc/1   |          |
+| updat  | POST my_index/_update/1
+{"doc":{"user":"zs","comment":"test 222","message":"123"}} | 添加字段 |
+| delete | DELETE my_index/_doc/1|                                     |
+
 
 > ES CRUD 操作
 
