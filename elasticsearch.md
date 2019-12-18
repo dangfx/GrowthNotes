@@ -362,6 +362,101 @@ GET /_mget
 }
 ```
 
+>mapping
+>
+>1. mapping 相当于 数据库中的 schema 
+>2. 一个 type 有一个 mapping 定义
+>3. es7.0 开始不需要在 mapping 中指定 type 信息
+
+字段的数据类型：
+| 数据类型                  | 类型描述 |
+| ------------------------- | -------- |
+| Text / keyword            | 简单类型 |
+| Date                      | 简单类型 |
+| Integer / Long / Floating | 简单类型 |
+| Boolean                   | 简单类型 |
+| IPV4 / IPV6               | 简单类型 |
+| 嵌套类型 {}               | 复杂类型 |
+| geo_point / geo_hash      | 特殊类型 |
+
+类型的自动识别：
+
+| JSON类型 | ES类型                         |
+| -------- | ------------------------------ |
+| string   | 1. 匹配日期格式设置为Date; 2.匹配数字格式设置为float/long; 3.设置Text,增加keyword子字段 |
+| 布尔值 | boolean |
+| 浮点值 | float |
+| 整型值 | long |
+| 对象 | object |
+| 数组 | 有第一个非空数值的类型决定 |
+| 空值 | 忽略 |
+
+设置 `dynamic mappings`
+
+|               | "true" | "false" | "static" |
+| ------------- | ------ | ------- | -------- |
+| 文档可索引    | Y      | Y       | N        |
+| 字段可索引    | Y      | N       | N        |
+| mapping被更新 | Y      | N       | N        |
+
+测试脚本
+
+```json
+#默认Mapping支持dynamic，写入的文档中加入新的字段
+PUT dynamic_mapping_test/_doc/1
+{
+  "newField":"someValue"
+}
+
+#该字段可以被搜索，数据也在_source中出现
+POST dynamic_mapping_test/_search
+{
+  "query":{
+    "match":{
+      "newField":"someValue"
+    }
+  }
+}
+
+#修改为dynamic false
+PUT dynamic_mapping_test/_mapping
+{
+  "dynamic": false
+}
+
+#新增 anotherField
+PUT dynamic_mapping_test/_doc/10
+{
+  "anotherField":"someValue"
+}
+
+#该字段不可以被搜索，因为dynamic已经被设置为false
+POST dynamic_mapping_test/_search
+{
+  "query":{
+    "match":{
+      "anotherField":"someValue"
+    }
+  }
+}
+
+#修改为strict
+PUT dynamic_mapping_test/_mapping
+{
+  "dynamic": "strict"
+}
+
+#写入数据出错，HTTP Code 400
+PUT dynamic_mapping_test/_doc/12
+{
+  "lastField":"value"
+}
+
+DELETE dynamic_mapping_test
+```
+
+
+
 ### `es` query
 
 ```json
@@ -371,9 +466,6 @@ GET _cat/health
 GET _cat/nodes
 // 查看所有索引
 GET _cat/indices
-
-// create mapping
-
 ```
 
 > create mapping
