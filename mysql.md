@@ -316,9 +316,23 @@ start slave;
 show slave status\G;
 ```
 
-### 4.配置MYCAT
+### 4.MYCAT
 
-注:将MYCAT安装到master服务器上
+>中间件：应用是程序 + {中间软件} + 数据库
+>
+>数据库中间件：MYCAT  {天上的理念，落地的实践} {逻辑数据库，封装数据库}
+>
+>跨语言，跨平台，跨数据库的通用中间件代理。
+>
+>功能：
+>
+>1. 读写分离
+>2. 数据切分（水平拆分，垂直拆分） 数据瓶颈：单表500W,单库5000W
+>3. 多数据源整合（sql,nosql）
+>
+>原理（拦截）：通过分片分析、路由分析、读写分离分析、缓存分析等，然后将此 SQL 发往后端的真实数据库，并将返回的结果做适当的处理，最终再返回给用户。
+
+注：将MYCAT安装到master服务器上
 
 > 修改上述master数据库授权
 
@@ -341,6 +355,8 @@ systemctl disable firewalld.service
 > 安装 mycli ==>https://blog.csdn.net/AnPHPer/article/details/80177105
 
 > 安装MYCAT：==>2008年阿里的Amoeba==>2012年阿里的Cobar，依赖于java
+>
+> 文档：http://www.mycat.io/document/mycat-definitive-guide.pdf
 
 ```shell
 # 下载 http://dl.mycat.io/
@@ -351,7 +367,7 @@ tar -zxvf Mycat-server-1.6.5-release-20180122220033-linux.tar.gz
 mv mycat /usr/local/
 ```
 
-> 修改配置文件(/usr/local/mycat/conf/schema.xml)
+> 修改配置文件(/usr/local/mycat/conf/schema.xml)，逻辑库定义和表以及分片定义的配置文件
 
 ```xml
 <?xml version="1.0"?>
@@ -381,7 +397,7 @@ mv mycat /usr/local/
 </mycat:schema>
 ```
 
-> 修改配置文件(/usr/local/mycat/conf/server.xml)
+> 修改配置文件(/usr/local/mycat/conf/server.xml)，服务器参数调整和用户授权的配置文件
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -429,7 +445,7 @@ mv mycat /usr/local/
 </mycat:server>
 ```
 
-> MYCAT 后续
+> 启动 MYCAT，访问 
 
 ```powershell
 # 启动MYCAT
