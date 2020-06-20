@@ -238,11 +238,17 @@ docker exec -it kibana /bin/bash
 
 ```shell
 
+# 创建网络
+docker network create somenetwork
+
+# 查看网络配置 重要!!!
+docker network inspect somenetwork
+
 # 远程仓库下载 elasticsearch:7.6.2 版本镜像
 docker pull elasticsearch:7.6.2
 
 # 启动镜像
-docker run --name es -p 9200:9200 -p 9300:9300 --privileged=true \
+docker run --name elasticsearch --net somenetwork -p 9200:9200 -p 9300:9300 --privileged=true \
 -v /opt/docker/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml \
 -v /opt/docker/elasticsearch/data:/usr/share/elasticsearch/data \
 -v /opt/docker/elasticsearch/plugins:/usr/share/elasticsearch/plugins \
@@ -272,7 +278,7 @@ yum install -y unzip zip
 unzip /opt/docker/elasticsearch/elasticsearch-analysis-ik-7.6.2.zip -d /opt/docker/elasticsearch/plugins/analysis-ik
 
 # 重新启动 es
-docker container start es
+docker container start elasticsearch
 
 # 查看日志差价是否加载  ==>  "loaded plugin [analysis-ik]"
 docker logs -f es | grep 'ik'
@@ -289,15 +295,26 @@ docker exec -it elasticsearch /bin/bash
 docker pull kibana:7.6.2
 
 # 启动镜像
-docker run --name kibana -p 5601:5601 \
+docker run --name kibana --net somenetwork -p 5601:5601 \
 -v /opt/docker/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml \
 -d kibana:7.6.2
 
 # 删除配置目录
 rm -rf /opt/docker/kibana/config/kibana.yml
 
-# 下面文件 IP 地址干获取 ==> IPAddress": "172.18.0.2"
-docker inspect es
+##### [hosts 怎样确定] #####
+
+# 选项说明
+--net somenetwork
+
+1. 指定了同一个自定义网络容器都在同一网段下
+2. 容器中 /etc/hosts 文件会添加一个容器ID与给当前容器划分的IP
+3. 容器间互连，可以通过IP[因为在同一个网段]，也可以通过容器名，docker 已经维护好了映射关系
+
+# 查看网络配置
+docker network inspect somenetwork
+
+##### [hosts 怎样确定] #####
 
 # 创建配置文件
 cat > /opt/docker/kibana/config/kibana.yml <<EOF
@@ -307,6 +324,18 @@ elasticsearch.hosts: [ "http://172.18.0.2:9200" ]
 xpack.monitoring.ui.container.elasticsearch.enabled: true
 i18n.locale: "zh-CN"
 EOF
+
+# 或者 
+cat > /opt/docker/kibana/config/kibana.yml <<EOF
+server.name: kibana
+server.host: "0.0.0.0"
+elasticsearch.hosts: [ "http://elasticsearch:9200" ]
+xpack.monitoring.ui.container.elasticsearch.enabled: true
+i18n.locale: "zh-CN"
+EOF
+
+# 启动容器
+docker container restart kibana
 
 # 查看是否启动
 浏览器访问 http://ip:5601
