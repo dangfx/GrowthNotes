@@ -238,7 +238,8 @@ docker exec -it kibana /bin/bash
 
 ```shell
 
-# 创建网络
+# 创建网络 
+# 会在物理机上虚拟出一块网卡 可以通过 ip addr 命令查看
 docker network create somenetwork
 
 # 查看网络配置 重要!!!
