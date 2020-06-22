@@ -77,19 +77,19 @@ ls -alh /usr/bin/ | grep 'mysql' # mysql命令目录
 ```shell
 1. 链接层
     1. 权限验证
-	2. 连接管理
-    	1. socket 本地客户端连接服务端
+    2. 连接管理
+        1. socket 本地客户端连接服务端
         2. TCP/IP 远程客户端连接服务端
 2. 服务层
     1. 查询缓存 key[sql]，value[查询结果] ==> MySQL8.0 废弃，弊大于利
-	2. 分析器
-    	1. 词法分析
+    2. 分析器
+        1. 词法分析
         2. 语法分析
     3. 优化器
-    	1. 生成执行计划
+        1. 生成执行计划
         2. 选择索引
     4. 执行器
-    	1. 调用引擎层接口，返回结果
+        1. 调用引擎层接口，返回结果
 3. 引擎层
 	1. 提供读写接口
 4. 存储层
@@ -113,22 +113,22 @@ ls -alh /usr/bin/ | grep 'mysql' # mysql命令目录
 存储引擎特性说明：
 
 InnoDB
-1. 支持事务，行锁，外键
-2. 索引结构：B+Tree
-3. .frm 表结构文件 / .idb 数据+索引文件
+    1. 支持事务，行锁，外键
+    2. 索引结构：B+Tree
+    3. .frm 表结构文件 / .idb 数据+索引文件
     
 MyISAM
-1. 支持表锁
-2. 索引结构：B+Tree
-3. .frm 表结构文件 / .MYD 数据文件 / .MYI 索引文件
+    1. 支持表锁
+    2. 索引结构：B+Tree
+    3. .frm 表结构文件 / .MYD 数据文件 / .MYI 索引文件
     
 MERGE
-1. 一组 MYISAM 类型表的集合
-2. 在多张表中添加数据，可以在 merge 类型表中查询
+    1. 一组 MYISAM 类型表的集合
+    2. 在多张表中添加数据，可以在 merge 类型表中查询
     
 MEMORY
-1. 索引结构：HASH
-2. .frm 表结构文件 数据存储在内存中
+    1. 索引结构：HASH
+    2. .frm 表结构文件 数据存储在内存中
 ```
 
 ### 5. sql join type
@@ -456,22 +456,22 @@ group by 语句优化:
         1. 使用分组不使用排序
     	select age, count(*) from emp group by age order by null;
         2. 分组字段创建索引
-		create index idx_emp_age_salary on (age, salary); 
+        create index idx_emp_age_salary on (age, salary); 
         
 嵌套查询优化:
-	1. 使用连接查询替代子查询
+    1. 使用连接查询替代子查询
     
 or 查询优化:
-	1. 使用 union 替换 or
+    1. 使用 union 替换 or
     
 分页优化:
-	1. 分页操作前需要排序， 故而先排序后分页
+    1. 分页操作前需要排序， 故而先排序后分页
     > select * from t_item, (select id from t_item t order by id limit 200000, 10) a where t.id = a.id;
     2. 适用于"主键自增且主键不能断层"的表
     > select * from t_item  where >= 2000000 limit 0, 10;
     
 手动指定索引:
-	1. use index 建议 mysql 使用某个索引, 可能不被使用
+    1. use index 建议 mysql 使用某个索引, 可能不被使用
     2. ignore index 如果有多个索引生效, 忽略某一个/几个索引
     3. force index 强制 mysql 使用某个索引
 ```
