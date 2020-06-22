@@ -467,7 +467,7 @@ or 查询优化:
 分页优化:
 	1. 分页操作前需要排序， 故而先排序后分页
     > select * from t_item, (select id from t_item t order by id limit 200000, 10) a where t.id = a.id;
-    3. 适用于"主键自增且主键不能断层"的表
+    2. 适用于"主键自增且主键不能断层"的表
     > select * from t_item  where >= 2000000 limit 0, 10;
     
 手动指定索引:
@@ -477,12 +477,12 @@ or 查询优化:
 ```
 
 > 7.应用程序优化
->
-> ```shell
-> 	1. 使用连接池, 避免连接频繁创建和销毁
->     2. 使用 cache 层[mybatis cache, redis], 降低 MySQL 服务压力
->     3. 通过 MySQL 读写分离降低服务压力
-> ```
+
+```html
+1.使用连接池, 避免连接频繁创建和销毁
+2.使用 cache 层[mybatis cache, redis], 降低 MySQL 服务压力
+3.通过 MySQL 读写分离降低服务压力
+```
 
 ### 6. MySQL 锁
 
