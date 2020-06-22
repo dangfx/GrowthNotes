@@ -76,13 +76,13 @@ ls -alh /usr/bin/ | grep 'mysql' # mysql命令目录
 
 ```shell
 1. 链接层
-	1. 权限验证
-    2. 连接管理
+    1. 权限验证
+	2. 连接管理
     	1. socket 本地客户端连接服务端
         2. TCP/IP 远程客户端连接服务端
 2. 服务层
-	1. 查询缓存 key[sql]，value[查询结果] ==> MySQL8.0 废弃，弊大于利
-    2. 分析器
+    1. 查询缓存 key[sql]，value[查询结果] ==> MySQL8.0 废弃，弊大于利
+	2. 分析器
     	1. 词法分析
         2. 语法分析
     3. 优化器
@@ -113,22 +113,22 @@ ls -alh /usr/bin/ | grep 'mysql' # mysql命令目录
 存储引擎特性说明：
 
 InnoDB
-	1. 支持事务，行锁，外键
-    2. 索引结构：B+Tree
-    3. .frm 表结构文件 / .idb 数据+索引文件
+1. 支持事务，行锁，外键
+2. 索引结构：B+Tree
+3. .frm 表结构文件 / .idb 数据+索引文件
     
 MyISAM
-	1. 支持表锁
-    2. 索引结构：B+Tree
-    3. .frm 表结构文件 / .MYD 数据文件 / .MYI 索引文件
+1. 支持表锁
+2. 索引结构：B+Tree
+3. .frm 表结构文件 / .MYD 数据文件 / .MYI 索引文件
     
 MERGE
-	1. 一组 MYISAM 类型表的集合
-    2. 在多张表中添加数据，可以在 merge 类型表中查询
+1. 一组 MYISAM 类型表的集合
+2. 在多张表中添加数据，可以在 merge 类型表中查询
     
 MEMORY
-	1. 索引结构：HASH
-    2. .frm 表结构文件 数据存储在内存中
+1. 索引结构：HASH
+2. .frm 表结构文件 数据存储在内存中
 ```
 
 ### 5. sql join type
@@ -424,7 +424,7 @@ select * from information_schema.optimizer_trace\G;
 ```shell
 
 查询语句优化:
-	1. 全值匹配索引
+    1. 全值匹配索引
     2. 最左前缀原则 [类似上楼梯, 中间断了索引失效]
     3. 范围查询，字段运算[隐式类型转换相当于字段运算]
     4. 索引覆盖
@@ -437,23 +437,23 @@ select * from information_schema.optimizer_trace\G;
 大批量插入数据:
     地址: https://dev.mysql.com/doc/refman/8.0/en/load-data.html
    	示例:> load data local infile '/tmp/test.sql' into table `tbale` fields terminated by ','  lines starting by '\n';
-	1. 数据主键有序
+    1. 数据主键有序
     2. 临时禁用唯一性检查 set unique_check = 0; 执行完后开启 set unique_check = 1;
     3. 禁用自动提交 set autocommit = 0; 开启 set autocommit = 1;
     
 insert 语句优化:
-	1. 多条sql合并为一条sql
+    1. 多条sql合并为一条sql
     2. 设置手动提交事务
     3. 数据主键有序
         
 order by 语句优化:
-	1. 非主键索引 explain Extra: filesort ==> index, 排序后的字段尽量是索引
+    1. 非主键索引 explain Extra: filesort ==> index, 排序后的字段尽量是索引
     2. 调整排序缓存大小: show variables like 'sort_buffer_size%';
     3. 返回数据小于此变量值时，使用内存排序: show variables like 'max_length_for_sort_data%';
     
 group by 语句优化:
 	示例:>
-    	1. 使用分组不使用排序
+        1. 使用分组不使用排序
     	select age, count(*) from emp group by age order by null;
         2. 分组字段创建索引
 		create index idx_emp_age_salary on (age, salary); 
