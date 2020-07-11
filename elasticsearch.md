@@ -1,51 +1,54 @@
+### 公共资源
 
-搜索笔记
+> 1. 下载地址：https://www.elastic.co/cn/downloads/past-releases#elasticsearch
+> 2. 文档地址：https://www.elastic.co/guide/en/elasticsearch/reference/7.2/index.html
+> 3. 版本支持：https://www.elastic.co/cn/support/matrix
+> 4. 参考资料（阮一鸣）：https://github.com/onebirdrocks/geektime-ELK
 
+### 定义
 
+>elasticsearch： 提供海量数据存储，近实时数据搜索与聚合功能
+>
+>beats：轻量的数据收集器
+>
+>logstash：做数据转换
+>
+>kibana：数据可视化
 
+### 使用场景
 
+>搜索，日志管理，安全分析，指标分析，业务分析
 
+### 安装说明
 
+>1. linux install V7.2.1
+>2. elasticsearch 7.2.x ==> JDK1.8已上版本
+>3. 创建组与用户：Caused by: java.lang.RuntimeException: can not run elasticsearch as root
+>4. 安装根目录：/opt/software/
 
-
-elasticsearch
-公共资源
-下载地址：https://www.elastic.co/cn/downloads/past-releases#elasticsearch
-文档地址：https://www.elastic.co/guide/en/elasticsearch/reference/7.2/index.html
-版本支持：https://www.elastic.co/cn/support/matrix
-参考资料（阮一鸣）：https://github.com/onebirdrocks/geektime-ELK
-定义
-elasticsearch： 提供海量数据存储，近实时数据搜索与聚合功能
-
-beats：轻量的数据收集器
-
-logstash：做数据转换
-
-kibana：数据可视化
-
-使用场景
-搜索，日志管理，安全分析，指标分析，业务分析
-
-安装说明
-linux install V7.2.1
-elasticsearch 7.2.x ==> JDK1.8已上版本
-创建组与用户：Caused by: java.lang.RuntimeException: can not run elasticsearch as root
-安装根目录：/opt/software/
+```shell
 # 创建单独组与用户
 groupadd elk
 useradd elk -g elk
 passwd elk
 su elk
-由于 elasticsearch + kibana 安装相对麻烦, 强烈建议通过 docker 构建环境 !!!
+```
+> `由于 elasticsearch + kibana 安装相对麻烦, 强烈建议通过 docker 构建环境 !!!`
 
-安装 elasticsearch
+### 安装 `elasticsearch`
+
+```shell
 wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.2.1-linux-x86_64.tar.gz
 tar -xzf elasticsearch-7.2.1-linux-x86_64.tar.gz
 cd elasticsearch-7.2.1/
 ./bin/elasticsearch | ./bin/elasticsearch -d
-test elasticsearch
-curl http://192.168.114.131:9200
+```
 
+### test `elasticsearch`
+
+> curl http://192.168.114.131:9200
+
+```json
 {
   "name" : "localhost",
   "cluster_name" : "elasticsearch",
@@ -63,7 +66,11 @@ curl http://192.168.114.131:9200
   },
   "tagline" : "You Know, for Search"
 }
-安装 kibana
+```
+
+### 安装 `kibana`
+
+```shell
 wget https://artifacts.elastic.co/downloads/kibana/kibana-7.2.1-linux-x86_64.tar.gz
 tar -xzf kibana-7.2.1-linux-x86_64.tar.gz
 # 备份配置文件,连接es
@@ -73,19 +80,27 @@ vim kibana.yml
 # lasticsearch.hosts: ["http://192.168.114.131:9200"]
 cd /opt/software/kibana-7.2.1-linux-x86_64/
 ./bin/kibana -c /opt/software/kibana-7.2.1-linux-x86_64/config/kibana.yml
-test kibana
-浏览器访问：http://192.168.114.131:5601
+```
 
-装中文分词插件
-网址：https://github.com/medcl/elasticsearch-analysis-ik
+### test `kibana`
 
+> 浏览器访问：http://192.168.114.131:5601
+
+### 装中文分词插件
+
+>网址：https://github.com/medcl/elasticsearch-analysis-ik
+
+```shell
 cd elasticsearch-7.2.1/plugins/
 wget https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.2.1/elasticsearch-analysis-ik-7.2.1.zip
 yum install unzip
 unzip elasticsearch-analysis-ik-7.2.1.zip -d ik/
 rm -rf elasticsearch-analysis-ik-7.2.1.zip
-重启es，中文分词效果测试
+```
 
+>重启es，中文分词效果测试
+
+```json
 GET _analyze
 {
   "analyzer":"ik_smart",
@@ -97,18 +112,21 @@ GET _analyze
   "analyzer":"ik_max_word",
   "text":"美国留给伊拉克的是个烂摊子吗"
 }
-es 分词器分类
+```
 
-英文空格切分
+>es 分词器分类
+>
+>英文空格切分
+>
+>中文 `icu_analyzer`全球化分词支持，  `ik`，  `THU`
+>
+>ICU：https://github.com/elastic/elasticsearch-analysis-icu
+>
+>IK：https://github.com/medcl/elasticsearch-analysis-ik
+>
+>THULAC：https://github.com/microbun/elasticsearch-thulac-plugin
 
-中文 icu_analyzer全球化分词支持， ik， THU
-
-ICU：https://github.com/elastic/elasticsearch-analysis-icu
-
-IK：https://github.com/medcl/elasticsearch-analysis-ik
-
-THULAC：https://github.com/microbun/elasticsearch-thulac-plugin
-
+```json
 # standard 按词(空格)切分，小写处理
 GET _analyze
 {
@@ -157,43 +175,53 @@ GET _analyze
   "analyzer": "english",
   "text": "2 running Quick brown-foxes leap over lazy dogs in the summer evening."
 }
-基本概念：
+```
 
-分词：将文本转换为倒排索引中的 terms 的过程，文本 ==> terms
+> 基本概念：
+>
+> 分词：将文本转换为倒排索引中的 terms 的过程，文本 ==> terms 
+>
+> 分词过程：character_filter[字符过滤器] ==>  tokenizer[分词器]  ==> token filetr [token过滤器]
+>
+> char_filter：html标签
+>
+> token filetr：字母大小写转换，删除停用词
+>
+> es 与 RDBMS对比
 
-分词过程：character_filter[字符过滤器] ==> tokenizer[分词器] ==> token filetr [token过滤器]
+| RDBMS  | elasticsearch | desc                                    |
+| ------ | ------------- | --------------------------------------- |
+| db(table)  | index(type)   | es7以上只支持一个type，相似文档结构集合 |
+| row    | document      |                                         |
+| column | field         |                                         |
+| schema | mapping       |                                         |
+| SQL    | DSL           | Domain Specific Language：领域特定语言  |
 
-char_filter：html标签
+>正排索引：文档ID到文档内容与单词的关联
+>
+>倒排索引：单词到文档ID的关联
 
-token filetr：字母大小写转换，删除停用词
+| 文档ID | 文档内容                 |      | term          | count | document:postion |
+| ------ | ------------------------ | ---- | ------------- | ----- | ---------------- |
+| 1      | master elasticsearch     |      | elasticsearch | 3     | 1:1 2:0 3:0      |
+| 2      | elasticsearch server     |      | master        | 1     | 1:0              |
+| 3      | elasticsearch essentials |      | server        | 1     | 2:1              |
+|        |                          |      | essentials    | 1     | 3:1              |
 
-es 与 RDBMS对比
+>term distionary（单词词典），记录所有文档单词，单词到倒排列表的关联关系，B+/hash拉链法实现
+>
+>posting list（倒排列表），记录了单词对应的文档组合，文档ID，词频，位置，偏移（单词高亮）
 
-RDBMS elasticsearch desc
-db(table) index(type) es7以上只支持一个type，相似文档结构集合
-row document  
-column  field 
-schema  mapping 
-SQL DSL Domain Specific Language：领域特定语言
-正排索引：文档ID到文档内容与单词的关联
+| 文档ID | 文档内容                 |      | docId | TF   | postion | offset |
+| ------ | ------------------------ | ---- | ----- | ---- | ------- | ------ |
+| 1      | master elasticsearch     |      | 1     | 1    | 1       | <7,20> |
+| 2      | elasticsearch server     |      | 2     | 1    | 0       | <0,13> |
+| 3      | elasticsearch essentials |      | 3     | 1    | 0       | <0,13> |
 
-倒排索引：单词到文档ID的关联
 
-文档ID  文档内容    term  count document:postion
-1 master elasticsearch    elasticsearch 3 1:1 2:0 3:0
-2 elasticsearch server    master  1 1:0
-3 elasticsearch essentials    server  1 2:1
-essentials  1 3:1
-term distionary（单词词典），记录所有文档单词，单词到倒排列表的关联关系，B+/hash拉链法实现
+> ES CRUD 操作说明及操作
 
-posting list（倒排列表），记录了单词对应的文档组合，文档ID，词频，位置，偏移（单词高亮）
-
-文档ID  文档内容    docId TF  postion offset
-1 master elasticsearch    1 1 1 <7,20>
-2 elasticsearch server    2 1 0 <0,13>
-3 elasticsearch essentials    3 1 0 <0,13>
-ES CRUD 操作说明及操作
-
+```json
 1. index ==> 先删除，再创建
 PUT my_index/_doc/1 
 {"user":"mike", "comment":"test 111"}
@@ -262,8 +290,10 @@ POST users/_update/1/
 ####### Delete Document ######
 #Delete by Id
 DELETE users/_doc/1
-SE URI search 查询
+```
+> SE URI search 查询
 
+```json
 # q 指定查询语句
 # df指定查询字段
 # sort 排序
@@ -271,85 +301,92 @@ SE URI search 查询
 # profile 查看乬是如何被执行的
 GET /kibana_sample_data_ecommerce/_search?q=ZO0299602996&df=sku&sort=customer_id:desc&from=0&size=5
 {
-    "profile":"true"
+  "profile":"true"
 }
 
 # 指定单字段查询
 GET /kibana_sample_data_ecommerce/_search?q=sku:ZO0299602996
 {
-    "profile":"true"
+  "profile":"true"
 }
 
 # PhraseQuery 等效 Eddie AND Underwood 与顺序一致
 GET /kibana_sample_data_ecommerce/_search?q=customer_full_name:"Eddie Underwood"
 {
-    "profile":"true"
+  "profile":"true"
 }
 
 # 验证与顺序有关
 GET /kibana_sample_data_ecommerce/_search?q=customer_full_name:"Underwood Eddie"
 {
-    "profile":"true"
+  "profile":"true"
 }
 
 # BooleanQuery 与顺序无关
 GET /kibana_sample_data_ecommerce/_search?q=customer_full_name:(Underwood AND Eddie)
 {
-    "profile":"true"
+  "profile":"true"
 }
 
 # 等效于 Eddie OR MALE
 GET /kibana_sample_data_ecommerce/_search?q=customer_full_name:Eddie MALE
 {
-    "profile":"true"
+  "profile":"true"
 }
 
 # customer_full_name:underwood -customer_full_name:eddie
 GET /kibana_sample_data_ecommerce/_search?q=customer_full_name:(Underwood NOT Eddie)
 {
-    "profile":"true"
+  "profile":"true"
 }
 
 # 区间查询
 GET /kibana_sample_data_ecommerce/_search?q=customer_id：<= 38
 {
-    "profile":"true"
+  "profile":"true"
 }
 
 GET /kibana_sample_data_ecommerce/_search?q=customer_id:[39 TO 39]
 {
-    "profile":"true"
+  "profile":"true"
 }
 
 #通配符查询
 GET /kibana_sample_data_ecommerce/_search?q=currency:EUR*
 {
-    "profile":"true"
+  "profile":"true"
 }
 
 # 模糊匹配&近似度匹配
 GET /kibana_sample_data_ecommerce/_search?q=category:Clothin~1
 {
-    "profile":"true"
+  "profile":"true"
 }
 
 # "Lord Rings" 单词中间可以间隔2单词
 GET /kibana_sample_data_ecommerce/_search?q=category:"Lord Rings"~2
 {
-    "profile":"true"
+  "profile":"true"
 }
-bulk的格式： {action:{metadata}}\n {requstbody}\n (请求体)
+```
 
-action：(行为)，包含create（文档不存在时创建）、update（更新文档）、index（创建新文档或替换已用文档）、delete（删除一个文档）。 create和index的区别：如果数据存在，使用create操作失败，会提示文档已存在，使用index则可以成功执行。 metadata：(行为操作的具体索引信息)，需要指明数据的_index、_type、_id。
+>bulk的格式：
+>{action:{metadata}}\n
+>{requstbody}\n (请求体)
+>
+>action：(行为)，包含create（文档不存在时创建）、update（更新文档）、index（创建新文档或替换已用文档）、delete（删除一个文档）。
+>create和index的区别：如果数据存在，使用create操作失败，会提示文档已存在，使用index则可以成功执行。
+>metadata：(行为操作的具体索引信息)，需要指明数据的_index、_type、_id。
 
+```json
 # 示例说明1 bulk
-{ "index" : { "_index" : "test", "_id" : "1" } }    //行为，索引信息
-{ "field1" : "value1" }                             //请求体                   
-{ "delete" : { "_index" : "test", "_id" : "2" } }   //删除的批量操作不需要请求体
+{ "index" : { "_index" : "test", "_id" : "1" } }  //行为，索引信息
+{ "field1" : "value1" }               //请求体         
+{ "delete" : { "_index" : "test", "_id" : "2" } } //删除的批量操作不需要请求体
 { "create" : { "_index" : "test2", "_id" : "3" } }  //如果记录存在，创建失败
-{ "field1" : "value3" }                             //请求体
-{ "update" : {"_id" : "1", "_index" : "test"} }     //更新不能缺失_id，文档不存在更新将会失败
-{ "doc" : {"field2" : "value2"} }                   //请求体
+{ "field1" : "value3" }               //请求体
+{ "update" : {"_id" : "1", "_index" : "test"} }   //更新不能缺失_id，文档不存在更新将会失败
+{ "doc" : {"field2" : "value2"} }         //请求体
 
 # 示例说明2 Multi Get
 https://www.elastic.co/guide/en/elasticsearch/reference/7.1/docs-multi-get.html
@@ -369,39 +406,49 @@ GET /_mget
         }
     ]
 }
-mapping
+```
 
-mapping 相当于 数据库中的 schema
-一个 type 有一个 mapping 定义
-es7.0 开始不需要在 mapping 中指定 type 信息
+>mapping
+>
+>1. mapping 相当于 数据库中的 schema 
+>2. 一个 type 有一个 mapping 定义
+>3. es7.0 开始不需要在 mapping 中指定 type 信息
+
 字段的数据类型：
 
-数据类型  类型描述
-Text / keyword  简单类型
-Date  简单类型
-Integer / Long / Floating 简单类型
-Boolean 简单类型
-IPV4 / IPV6 简单类型
-嵌套类型 {} 复杂类型
-geo_point / geo_hash  特殊类型
+| 数据类型                  | 类型描述 |
+| ------------------------- | -------- |
+| Text / keyword            | 简单类型 |
+| Date                      | 简单类型 |
+| Integer / Long / Floating | 简单类型 |
+| Boolean                   | 简单类型 |
+| IPV4 / IPV6               | 简单类型 |
+| 嵌套类型 {}               | 复杂类型 |
+| geo_point / geo_hash      | 特殊类型 |
+
 类型的自动识别：
 
-JSON类型  ES类型
-string  1. 匹配日期格式设置为Date; 2.匹配数字格式设置为float/long; 3.设置Text,增加keyword子字段
-布尔值 boolean
-浮点值 float
-整型值 long
-对象  object
-数组  有第一个非空数值的类型决定
-空值  忽略
-设置 dynamic mappings
+| JSON类型 | ES类型                         |
+| -------- | ------------------------------ |
+| string   | 1. 匹配日期格式设置为Date; 2.匹配数字格式设置为float/long; 3.设置Text,增加keyword子字段 |
+| 布尔值 | boolean |
+| 浮点值 | float |
+| 整型值 | long |
+| 对象 | object |
+| 数组 | 有第一个非空数值的类型决定 |
+| 空值 | 忽略 |
 
-"true"  "false" "static"
-文档可索引 Y Y N
-字段可索引 Y N N
-mapping被更新  Y N N
-测试脚本
+设置 `dynamic mappings`
 
+|               | "true" | "false" | "static" |
+| ------------- | ------ | ------- | -------- |
+| 文档可索引    | Y      | Y       | N        |
+| 字段可索引    | Y      | N       | N        |
+| mapping被更新 | Y      | N       | N        |
+
+> 测试脚本
+
+```json
 #默认Mapping支持dynamic，写入的文档中加入新的字段
 PUT dynamic_mapping_test/_doc/1
 {
@@ -453,21 +500,30 @@ PUT dynamic_mapping_test/_doc/12
 }
 
 DELETE dynamic_mapping_test
-elasticsearch 聚合
+```
 
-https://github.com/onebirdrocks/geektime-ELK/blob/master/part-1/3.14-Elasticsearch%E8%81%9A%E5%90%88%E5%88%86%E6%9E%90%E7%AE%80%E4%BB%8B/README.md
+>elasticsearch 聚合
+>
+>https://github.com/onebirdrocks/geektime-ELK/blob/master/part-1/3.14-Elasticsearch%E8%81%9A%E5%90%88%E5%88%86%E6%9E%90%E7%AE%80%E4%BB%8B/README.md
 
-es query
+
+### `es` query
+
+```json
 // 集群健康状况
 GET _cat/health
 // 所有节点
 GET _cat/nodes
 // 查看所有索引
 GET _cat/indices
-实例_01 create mapping
+```
 
-text 与 keyword 选择 ：https://blog.csdn.net/ahwsk/article/details/101272455
+> `实例_01`
+> create mapping
+>
+> text 与 keyword 选择 ：https://blog.csdn.net/ahwsk/article/details/101272455
 
+```json
 PUT my_geo
 {
   "settings": {
@@ -501,8 +557,11 @@ PUT my_geo
     }
   }
 }
-insert data
+```
 
+> insert data
+
+```json
 PUT my_geo/_doc/1
 {
   "address_name": "望京西地铁站",
@@ -579,8 +638,11 @@ PUT my_geo/_doc/7
   "location": "drm3btev3e86",
   "desc": "地址：test-02 address"
 }
-simple query
+```
 
+> simple query
+
+```json
 # term单词精确查询
 GET my_geo/_search
 {
@@ -613,8 +675,11 @@ GET my_geo/_search
     }
   }
 }
-地理位置 query
+```
 
+>地理位置 query
+
+```json
 # 经纬度 + 距离 [圆形]
 GET my_geo/_search
 {
@@ -653,8 +718,13 @@ GET my_geo/_search
     }
   }
 }
-实例_02 create mapping
+```
 
+> `实例_02`
+> create mapping
+>
+
+```json
 # delete index
 DELETE /sms-log-index
 
@@ -708,8 +778,12 @@ PUT /sms-log-index
     }
   }
 }
-init data one doc and many doc
+```
 
+> init data
+> `one doc` and `many doc`
+
+```json
 # delete doc by id
 DELETE sms-log-index/_doc/1
 
@@ -742,8 +816,12 @@ PUT sms-log-index/_bulk
 {"corpName" : "支付宝","createDate" : "2008-03-11T12:34:56","sendDate" : "2014-03-08T12:32:12","longCode" : "10690000967","mobile" : "18710738989","province" : "杭州","replyTatal" : 1,"smsContent" : "支付宝（中国）网络技术有限公司  是国内的第三方支付平台，致力于提供“简单、安全、快速”的支付解决方案 。支付宝公司从2004年建立开始，始终以“信任”作为产品和服务的核心。旗下有“支付宝”与“支付宝钱包”两个独立品牌。自2014年第二季度开始成为当前全球最大的移动支付厂商。","ipAddr" : "10.122.5.6","operateId" : 2,"state" : 0,"fee" : 5}
 {"index":{"_id":"6"}}
 {"corpName" : "华为","createDate" : "2001-03-14T12:34:56","sendDate" : "2019-03-08T12:32:12","longCode" : "10690000968","mobile" : "18910738989","province" : "深圳","replyTatal" : 25,"smsContent" : "华为技术有限公司（HUAWEI TECHNOLOGIES CO., LTD.）成立于1987年，总部位于中国广东省深圳市龙岗区。  华为是全球领先的信息与通信技术（ICT）解决方案供应商，专注于ICT领域，坚持稳健经营、持续创新、开放合作，在电信运营商、企业、终端和云计算等领域构筑了端到端的解决方案优势，为运营商客户、企业客户和消费者提供有竞争力的ICT解决方案、产品和服务，并致力于实现未来信息社会、构建更美好的全联接世界。2013年，华为首超全球第一大电信设备商爱立信，排名《财富》世界500强第315位。截至2016年底，华为有17万多名员工，华为的产品和解决方案已经应用于全球170多个国家，服务全球运营商50强中的45家及全球1/3的人口。","ipAddr" : "10.122.5.6","operateId" : 2,"state" : 0,"fee" : 5}
-qury doc 查询文档, 使用 POST {indexname}/_search 就可以了
+```
 
+> qury doc
+> `查询文档, 使用 POST {indexname}/_search 就可以了`
+
+```json
 # 2种分页查询
 
 # 1.实时分页查询
@@ -1082,8 +1160,11 @@ POST sms-log-index/_search
   }
 }
 
-aggregations doc 文档信息统计
+```
 
+> aggregations doc 文档信息统计
+
+```json
 # 范围统计查询
 POST sms-log-index/_search
 {
@@ -1166,11 +1247,14 @@ POST sms-log-index/_search
     }
   }
 }
-geo doc
+```
 
-geo_distance 圆形区域检索[一个点]
-geo_bounding_box 矩形区域检索[二个点]
-geo_polygon 多边形区域检索[多个点]
+> geo doc
+> - geo_distance 圆形区域检索[一个点]
+> - geo_bounding_box 矩形区域检索[二个点]
+> - geo_polygon 多边形区域检索[多个点]
+
+```json
 # 为索引添加 "location" 字段
 PUT /sms-log-index/_mapping
 {
@@ -1287,3 +1371,4 @@ POST sms-log-index/_search
     }
   }
 }
+```
