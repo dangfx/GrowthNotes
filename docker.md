@@ -1,8 +1,3 @@
----
-title: "docker study"
-tags: ""
----
-
 ## what is docker?
 
 > We have a complete container solution for you - no matter who you are and where you are on your containerization journey.
@@ -102,6 +97,8 @@ docker pull mysql:5.7
 docker ps 
 # 显示所有状态的容器及容器大小
 docker ps -as
+# 启动容器
+docker container start <容器ID>
 # 停止容器
 docker container stop <容器ID>
 # 删除容器
@@ -130,10 +127,10 @@ docker run -p 3307:3306 --name mysql5.7 \
 
 # 查看容器
 docker ps
-
+# 查看容器启动日志
+docker logs -f <容器名称>
 # 进入容器
 docker exec -it mysql5.7 /bin/bash
-
 # 连接 mysql
 mysql -u root -P 3306 -p123456
 ```
@@ -159,24 +156,29 @@ mysql -u root -P 3306 -p123456
 # 远程仓库下载 redis 5.0 版本镜像
 docker pull redis:5.0
 
+# 创建目录(:/etc/redis/redis.conf没有这个文件, 需要提前创建)
+mkdir -p /opt/docker/redis5.0/conf
+touch /opt/docker/redis5.0/conf/redis.conf
+
 # 启动镜像
-# 命令参考：
-# https://hub.docker.com/_/redis?tab=description
+# 命令参考：https://hub.docker.com/_/redis?tab=description
 docker run --name redis5.0 -p 6379:6379 \
 -v /opt/docker/redis5.0/data:/data \
 -v /opt/docker/redis5.0/conf/redis.conf:/etc/redis/redis.conf \
--d redis:5.0
+-d redis:5.0 redis-server /etc/redis/redis.conf
 
 # 查看容器
 docker ps
-
+# 查看容器启动日志
+docker logs -f <容器名称>
 # 1.进入容器启动
 docker exec -it redis5.0 /bin/bash
 # 2.连接 redis
 redis-cli -h localhost -p 6379
-
 # 以上2步可简化为下面1步
 docker exec -it redis5.0 redis-cli -h localhost -p 6379
+# redis 配置项说明地址
+https://raw.githubusercontent.com/redis/redis/5.0/redis.conf
 ```
 
 > redis 启动镜像参数说明
@@ -185,7 +187,7 @@ docker exec -it redis5.0 redis-cli -h localhost -p 6379
 --name redis5.0
 	redis 实例的别名
 -p 6379:6379
-	6379 容器对外暴露端口，6379 容器内部端口
+	6379 linux端口，6379 容器端口
 -d 
 	以守护进程运行 redis:5.0 是镜像名称
 -v /opt/docker/redis5.0/data:/data
@@ -194,7 +196,214 @@ docker exec -it redis5.0 redis-cli -h localhost -p 6379
 	配置文件挂载配置
 ```
 
-3.elasticsearch:7.6.2 / kibana:7.6.2
+3.mongodb4.4
+
+添加配置文件
+
+> 创建配置文件：vi /opt/docker/mongo4.4/conf/mongod.conf
+>
+> 配置参考地址：https://docs.mongodb.com/v4.2/reference/configuration-options/index.html
+
+```yml
+systemLog:
+   destination: file
+   path: /data/log/mongod.log
+   logAppend: true
+storage:
+   dbPath: /data/db
+   journal:
+      enabled: true
+net:
+   bindIp: 127.0.0.1
+   port: 27017
+setParameter:
+   enableLocalhostAuthBypass: false
+replication:
+   replSetName: rs0
+```
+
+docker 启动 step
+
+```shell
+# 远程仓库下载 mongo 4.4 版本镜像
+docker pull mongo:4.4
+# 启动镜像
+# 命令参考：https://hub.docker.com/_/mongo
+docker run -p 27017:27017 --name mongo4.4 \
+-v /opt/docker/mongo4.4/data:/data/db \
+-v /opt/docker/mongo4.4/log:/data/log \
+-v /opt/docker/mongo4.4/conf/mongod.conf:/etc/mongod.conf \
+-d mongo:4.4 --replSet "rs0"
+# 查看容器	
+docker ps
+# 查看容器启动日志
+docker logs -f <容器名称>
+# 1.进入容器启动
+docker exec -it mongo4.4 /bin/bash
+# 2.连接 mongodb
+mongo --host 127.0.0.1 --port 27017
+# 以上2步可简化为下面1步
+docker exec -it mongo4.4 mongo --host 127.0.0.1 --port 27017
+# 配置副本集
+rs.initiate(
+   {
+      _id: "rs0",
+      version: 1,
+      members: [
+         { _id: 0, host : "127.0.0.1:27017" }
+      ]
+   }
+)
+# 查看副本集
+rs.status()
+# 客户端工具地址
+https://www.mongodb.com/try/download/compass
+```
+
+【一主二从】`mongodb` 复制集配置 
+
+```shell
+# 创建 mongo 所需挂在文件
+mkdir -p /opt/docker/mongo4.4/{27017..27019}/data
+mkdir -p /opt/docker/mongo4.4/{27017..27019}/log
+mkdir -p /opt/docker/mongo4.4/{27017..27019}/conf
+
+# 创建 27017/mongod.conf
+cat > /opt/docker/mongo4.4/27017/conf/mongod.conf <<EOF
+systemLog:
+   destination: file
+   path: /data/log/mongod.log
+   logAppend: true
+storage:
+   dbPath: /data/db
+   journal:
+      enabled: true
+net:
+   bindIp: 0.0.0.0
+   port: 27017
+setParameter:
+   enableLocalhostAuthBypass: false
+replication:
+   replSetName: rs0
+EOF
+
+# 创建 27018/mongod.conf
+cat > /opt/docker/mongo4.4/27018/conf/mongod.conf <<EOF
+systemLog:
+   destination: file
+   path: /data/log/mongod.log
+   logAppend: true
+storage:
+   dbPath: /data/db
+   journal:
+      enabled: true
+net:
+   bindIp: 0.0.0.0
+   port: 27018
+setParameter:
+   enableLocalhostAuthBypass: false
+replication:
+   replSetName: rs0
+EOF
+
+# 创建 27019/mongod.conf
+cat > /opt/docker/mongo4.4/27019/conf/mongod.conf <<EOF
+systemLog:
+   destination: file
+   path: /data/log/mongod.log
+   logAppend: true
+storage:
+   dbPath: /data/db
+   journal:
+      enabled: true
+net:
+   bindIp: 0.0.0.0
+   port: 27019
+setParameter:
+   enableLocalhostAuthBypass: false
+replication:
+   replSetName: rs0
+EOF
+
+```
+
+【一主二从】`docker` 启动
+
+```shell
+# 虚拟出一块网卡(通信)
+docker network create mongonetwork
+# 查看网络配置
+docker network inspect mongonetwork
+
+# run docker
+docker run -p 27017:27017 --name mongo4.4_27017 --net mongonetwork \
+-v /opt/docker/mongo4.4/27017/data:/data/db \
+-v /opt/docker/mongo4.4/27017/log:/data/log \
+-v /opt/docker/mongo4.4/27017/conf/mongod.conf:/etc/mongod.conf \
+-d mongo:4.4 --replSet "rs0"
+
+docker run -p 27018:27017 --name mongo4.4_27018 --net mongonetwork \
+-v /opt/docker/mongo4.4/27018/data:/data/db \
+-v /opt/docker/mongo4.4/27018/log:/data/log \
+-v /opt/docker/mongo4.4/27018/conf/mongod.conf:/etc/mongod.conf \
+-d mongo:4.4 --replSet "rs0"
+
+docker run -p 27019:27017 --name mongo4.4_27019 --net mongonetwork \
+-v /opt/docker/mongo4.4/27019/data:/data/db \
+-v /opt/docker/mongo4.4/27019/log:/data/log \
+-v /opt/docker/mongo4.4/27019/conf/mongod.conf:/etc/mongod.conf \
+-d mongo:4.4 --replSet "rs0"
+
+# 查看 mongo 服务端口信息
+netstat -anp | grep  270*
+# 进入容器 查看具体 docker 容器 ip 地址
+docker exec -it mongo4.4_27017 mongo --host 172.19.0.2 --port 27017
+# 查看副本集
+rs.status()
+# 配置副本集
+rs.initiate(
+   {
+      _id: "rs0",
+      version: 1,
+      members: [
+         { _id: 0, host : "172.19.0.2:27017" },
+         { _id: 1, host : "172.19.0.3:27017" },
+         { _id: 2, host : "172.19.0.4:27017" }
+      ]
+   }
+)
+```
+
+
+
+4.zookeeper
+
+```shell
+# 远程仓库下载 3.6.1 版本镜像
+# https://zookeeper.apache.org/releases.html#download
+# https://hub.docker.com/_/zookeeper?tab=description
+docker pull zookeeper:3.6.1
+# 临时启动镜像，获取zoo.cfg
+mkdir -p zookeeper3.6.1/conf
+docker run --name zookeeper3.6.1 -d zookeeper:3.6.1
+docker exec -it zookeeper3.6.1 /bin/bash
+# cp 容器中文件到物理机中
+docker cp 2d7338ea06e3:/conf/zoo.cfg /opt/docker/zookeeper3.6.1/conf/
+# 启动容器
+docker run --name zookeeper3.6.1 \
+-v /opt/docker/zookeeper3.6.1/data:/data \
+-v /opt/docker/zookeeper3.6.1/log:/datalog \
+-v /opt/docker/zookeeper3.6.1/conf/zoo.cfg:/conf/zoo.cfg \
+-d zookeeper:3.6.1
+# 查看容器
+docker ps
+# 查看容器启动日志
+docker logs -f <容器名称>
+# 进入容器启动-连接
+docker exec -it zookeeper3.6.1 /bin/bash zkCli.sh
+```
+
+5.elasticsearch:7.6.2 / kibana:7.6.2
 
 > 1.数据与配置无挂载方式
 
