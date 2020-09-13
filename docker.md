@@ -374,8 +374,6 @@ rs.initiate(
 )
 ```
 
-
-
 4.zookeeper
 
 ```shell
@@ -553,3 +551,64 @@ docker container restart kibana
 # 进入容器
 docker exec -it kibana /bin/bash
 ```
+
+6.prometheus/grafana
+
+参考文档：
+
+https://www.bookstack.cn/books/prometheus_practice
+
+https://www.voidking.com/categories/
+
+```shell
+# ====> 安装 prometheus ====>
+docker pull prom/prometheus:v2.21.0
+mkdir -p /opt/docker/prometheus2.21.0/conf
+
+# 创建 prometheus.yml 文件
+cat > /opt/docker/prometheus2.21.0/conf/prometheus.yml <<EOF
+global:
+  scrape_interval: 15s #默认采集监控数据时间间隔
+  external_labels:
+    monitor: 'my-monitor'
+scrape_configs:  #监控对象设置
+  - job_name: prometheus #任务名称
+    scrape_interval: 5s #每隔5s获取一次监控数据
+    static_configs: #监控对象地址
+      - targets: ['192.168.5.128:9090']  # 将自己加入到监控对象中
+  - job_name: 'container'
+    static_configs:
+      - targets: ['192.168.5.128:8080']  # 本地 cadvisor 访问地址
+EOF
+
+# 创建 rules.yml 文件
+cat > /opt/docker/prometheus2.21.0/conf/rules.yml <<EOF
+EOF
+
+# run prometheus
+docker run --name=prometheus -d \
+-p 9090:9090 \
+-v /opt/docker/prometheus2.21.0/conf/prometheus.yml:/etc/prometheus/prometheus.yml \
+-v /opt/docker/prometheus2.21.0/conf/rules.yml:/etc/prometheus/rules.yml \
+prom/prometheus:v2.21.0 --config.file=/etc/prometheus/prometheus.yml --web.enable-lifecycle	
+
+# ====> 安装 grafana ====>
+docker pull grafana/grafana:7.1.5
+docker run -d --name=grafana -p 3000:3000 grafana/grafana:7.1.5
+
+# ====> 安装 cadvisor [监控docker] ====>
+docker pull google/cadvisor:latest
+docker run \
+  --volume=/:/rootfs:ro \
+  --volume=/var/run:/var/run:ro \
+  --volume=/sys:/sys:ro \
+  --volume=/var/lib/docker/:/var/lib/docker:ro \
+  --volume=/dev/disk/:/dev/disk:ro \
+  --publish=8080:8080 \
+  --detach=true \
+  --name=cadvisor \
+  --privileged \
+  --device=/dev/kmsg \
+  google/cadvisor:latest
+```
+
