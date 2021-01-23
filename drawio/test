@@ -1,1 +1,55 @@
-<mxfile host="app.diagrams.net" modified="2021-01-23T09:18:16.246Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36" version="14.2.7" etag="vi8JJptwlLWr-A0DmgmV" type="github"><diagram id="BFtE_AM4dvv57Dl4_zMP">UzV2zq1wL0osyPDNT0nNUTV2VTV2LsrPL4GwciucU3NyVI0MMlNUjV1UjYwMgFjVyA2HrCFY1qAgsSg1rwSLBiADYTaQg2Y1AA==</diagram></mxfile>
+<mxfile host="app.diagrams.net" modified="2021-01-23T09:28:53.903Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36" etag="FFBIbSa2ysx1BMu7mPh0" version="14.2.7" type="github">
+  <diagram id="BFtE_AM4dvv57Dl4_zMP" name="Page-1">
+    <mxGraphModel dx="1360" dy="836" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="Isi4t-mbJj2dNLbhB2am-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="Isi4t-mbJj2dNLbhB2am-1" target="Isi4t-mbJj2dNLbhB2am-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Isi4t-mbJj2dNLbhB2am-1" value="Actor" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="30" y="60" width="40" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="Isi4t-mbJj2dNLbhB2am-2" value="User DB" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;" vertex="1" parent="1">
+          <mxGeometry x="171" y="170" width="60" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="Isi4t-mbJj2dNLbhB2am-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="Isi4t-mbJj2dNLbhB2am-3" target="Isi4t-mbJj2dNLbhB2am-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Isi4t-mbJj2dNLbhB2am-20" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;dashed=1;strokeColor=#FF9933;strokeWidth=2;" edge="1" parent="1" source="Isi4t-mbJj2dNLbhB2am-3" target="Isi4t-mbJj2dNLbhB2am-9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Isi4t-mbJj2dNLbhB2am-21" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="Isi4t-mbJj2dNLbhB2am-3" target="Isi4t-mbJj2dNLbhB2am-7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Isi4t-mbJj2dNLbhB2am-3" value="注册模块" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="141" y="70" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Isi4t-mbJj2dNLbhB2am-7" value="消息服务" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="317.5" y="185" width="95" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="Isi4t-mbJj2dNLbhB2am-23" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="Isi4t-mbJj2dNLbhB2am-9" target="Isi4t-mbJj2dNLbhB2am-7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Isi4t-mbJj2dNLbhB2am-9" value="短信模块" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="310" y="75" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="Isi4t-mbJj2dNLbhB2am-11" value="request" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" vertex="1" parent="1">
+          <mxGeometry x="70" y="70" width="60" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="Isi4t-mbJj2dNLbhB2am-12" value="100ms" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" vertex="1" parent="1">
+          <mxGeometry x="200" y="140" width="50" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="Isi4t-mbJj2dNLbhB2am-14" value="100ms" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" vertex="1" parent="1">
+          <mxGeometry x="261" y="70" width="50" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="Isi4t-mbJj2dNLbhB2am-18" value="send 5ms" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" vertex="1" parent="1">
+          <mxGeometry x="250" y="150" width="70" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="Isi4t-mbJj2dNLbhB2am-19" value="receive" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" vertex="1" parent="1">
+          <mxGeometry x="364" y="125" width="50" height="20" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
